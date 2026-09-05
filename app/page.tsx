@@ -1,4 +1,5 @@
 import ProjectList from "../components/ProjectList";
+import ContactCard from "../components/ContactCard";
 
 const projects = [
   {
@@ -37,12 +38,18 @@ export default function Home() {
       <section className="text-center py-12">
         <h1 className="text-4xl font-bold mb-4">My Portfolio</h1>
         <p className="text-lg text-gray-700">
-          I’m Sebastian Bernal, a web full stack developer learning Next.js and React. I’ve
-          built a variety of responsive and interactive web applications, and
-          these are some of the projects I’ve worked on.
+          I’m Sebastian Bernal, a web full stack developer learning Next.js and
+          React. I’ve built a variety of responsive and interactive web
+          applications, and these are some of the projects I’ve worked on.
         </p>
       </section>
       <ProjectList projects={projects} />
+
+      <ContactCard
+        title="Contact Me"
+        phoneNumber={6621415468}
+        gmail="sebasbernals11@gmai.com"
+      />
     </main>
   );
 }
