@@ -1,38 +1,19 @@
 import ProjectList from "../components/ProjectList";
 import ContactCard from "../components/ContactCard";
 
-const projects = [
-  {
-    title: "Space Explorer",
-    description:
-      "A web application for exploring space images and information using NASA and Wikipedia APIs.",
-    technologies: ["HTML", "CSS", "JavaScript", "NASA API", "Wikipedia API"],
-    link: "https://github.com/sebasss18/wdd330-space_explorer",
-  },
-  {
-    title: "Taste of Mexico",
-    description:
-      "A responsive recipe website featuring Mexican food recipes and interactive web features.",
-    technologies: ["HTML", "CSS", "JavaScript"],
-    link: "https://github.com/sebasss18/wdd231",
-  },
-  {
-    title: "Popcorn Picks",
-    description:
-      "A movie recommendation website that helps users discover movies based on their interests.",
-    technologies: ["HTML", "CSS", "JavaScript"],
-    link: "https://github.com/sebasss18/wdd131",
-  },
-  {
-    title: "Sleep Outside",
-    description:
-      "A responsive e-commerce website for outdoor products developed as a team project.",
-    technologies: ["HTML", "CSS", "JavaScript"],
-    link: "https://github.com/sebasss18/wdd330-sleepoutside",
-  },
-];
+async function getProjects() {
+  const res = await fetch("http://localhost:3000/api/projects");
 
-export default function Home() {
+  if (!res.ok) {
+    throw new Error("Failed to fetch projects.");
+  }
+
+  return res.json();
+}
+
+export default async function Home() {
+  const projects = await getProjects();
+
   return (
     <main className="container mx-auto px-4 py-12">
       <section className="text-center py-12">
@@ -43,6 +24,7 @@ export default function Home() {
           applications, and these are some of the projects I’ve worked on.
         </p>
       </section>
+
       <ProjectList projects={projects} />
 
       <ContactCard
