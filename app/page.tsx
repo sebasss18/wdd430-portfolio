@@ -1,18 +1,9 @@
 import ProjectList from "../components/ProjectList";
 import ContactCard from "../components/ContactCard";
+import { getProjects } from "../lib/projects-db";
 
-async function getProjects() {
-  const res = await fetch("http://localhost:3000/api/projects");
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch projects.");
-  }
-
-  return res.json();
-}
-
-export default async function Home() {
-  const projects = await getProjects();
+export default function Home() {
+  const projects = getProjects();
 
   return (
     <main className="container mx-auto px-4 py-12">
