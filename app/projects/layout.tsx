@@ -7,9 +7,27 @@ export default function ProjectsLayout({
 }) {
   return (
     <section>
-      <nav className="flex gap-6 bg-blue-600 px-4 py-4 text-white">
-        <Link href="/projects">Projects</Link>
-        <Link href="/projects/settings">Settings</Link>
+      <nav className="flex gap-6 bg-slate-700 px-4 py-2 text-white mx-5 mb-3 rounded-b-xl">
+        <Link
+          href="/projects"
+          className="transition-all duration-300 hover:text-slate-300 active:scale-95"
+        >
+          Projects
+        </Link>
+
+        <Link
+          href="/projects/school"
+          className="transition-all duration-300 hover:text-slate-300 active:scale-95"
+        >
+          School
+        </Link>
+
+        <Link
+          href="/projects/opensource"
+          className="transition-all duration-300 hover:text-slate-300 active:scale-95"
+        >
+          OpenSource
+        </Link>
       </nav>
 
       {children}
