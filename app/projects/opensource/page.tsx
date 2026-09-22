@@ -5,13 +5,17 @@ export default async function Home() {
   const projects = await getProjects("opensource");
 
   return (
-    <main className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-10">OpenSource Projects</h1>
+    <main className="container mx-auto min-h-screen px-4 py-12 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+      <h1 className="mb-10 text-3xl font-bold text-slate-900 dark:text-slate-100">
+        OpenSource Projects
+      </h1>
 
       {projects.length > 0 ? (
         <ProjectList projects={projects} />
       ) : (
-        <p className="text-gray-500">No OpenSource projects found.</p>
+        <p className="text-slate-500 dark:text-slate-400">
+          No OpenSource projects found.
+        </p>
       )}
     </main>
   );

@@ -6,7 +6,7 @@ export default function Header() {
       <div className="max-w-4xl mx-auto px-4 flex justify-between items-center">
         <div
           id="header-title"
-          className="text-2xl font-bold transition-all duration-300 hover:scale-105 hover:text-slate-300 active:scale-95"
+          className="text-2xl font-bold"
         >
           Sebastian Bernal
         </div>
