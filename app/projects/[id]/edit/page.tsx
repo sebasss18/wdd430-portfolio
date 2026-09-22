@@ -3,15 +3,16 @@ import EditProject from "@/components/EditProjects";
 import { notFound } from "next/navigation";
 
 interface EditProjectPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function EditProjectPage({
   params,
 }: EditProjectPageProps) {
-  const project = await getProjectById(Number(params.id));
+  const { id } = await params;
+  const project = await getProjectById(Number(id));
 
   if (!project) {
     notFound();

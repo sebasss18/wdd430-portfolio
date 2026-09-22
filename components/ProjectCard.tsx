@@ -1,4 +1,7 @@
+import Link from "next/link";
+
 interface ProjectCardProps {
+  id: number;
   title: string;
   description: string;
   technologies: string[];
@@ -6,6 +9,7 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({
+  id,
   title,
   description,
   technologies,
@@ -35,6 +39,14 @@ export default function ProjectCard({
           </a>
         </p>
       )}
+      <p className="mt-2">
+        <Link
+          href={`/projects/${id}/edit`}
+          className="text-slate-700 hover:text-slate-900 hover:underline dark:text-slate-300 dark:hover:text-white"
+        >
+          Edit
+        </Link>
+      </p>
     </article>
   );
 }

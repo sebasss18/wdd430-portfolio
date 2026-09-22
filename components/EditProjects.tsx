@@ -1,7 +1,8 @@
 "use client";
 
 import { Project } from "@/lib/projects-db";
-import { updateProject } from "@/app/actions/project";
+import { updateProject, deleteProject } from "@/app/actions/project";
+
 import Link from "next/link";
 
 interface EditProjectProps {
@@ -15,7 +16,11 @@ export default function EditProject({ project }: EditProjectProps) {
         Update Project
       </h3>
 
-      <form action={updateProject.bind(null, project.id)} className="space-y-4">
+      <form
+        id="update-project-form"
+        action={updateProject.bind(null, project.id)}
+        className="space-y-4"
+      >
         <div>
           <label
             htmlFor="title"
@@ -101,10 +106,13 @@ export default function EditProject({ project }: EditProjectProps) {
             className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-500 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
           />
         </div>
+      </form>
 
-        <div className="flex gap-3 pt-2">
+      <div className="flex items-center justify-between pt-5">
+        <div className="flex gap-3">
           <button
             type="submit"
+            form="update-project-form"
             className="rounded-lg bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-500"
           >
             Save Changes
@@ -117,7 +125,25 @@ export default function EditProject({ project }: EditProjectProps) {
             Cancel
           </Link>
         </div>
-      </form>
+
+        <form
+          action={deleteProject.bind(null, project.id)}
+          onSubmit={(e) => {
+            if (
+              !window.confirm("Are you sure you want to delete this project?")
+            ) {
+              e.preventDefault();
+            }
+          }}
+        >
+          <button
+            type="submit"
+            className="rounded-lg border border-red-300 px-4 py-2 font-medium text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950"
+          >
+            Delete Project
+          </button>
+        </form>
+      </div>
     </article>
   );
 }
