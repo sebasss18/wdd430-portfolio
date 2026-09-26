@@ -1,7 +1,8 @@
 "use client";
 
+import { useActionState } from "react";
 import { Project } from "@/lib/projects-db";
-import { updateProject, deleteProject } from "@/app/actions/project";
+import { updateProject, deleteProject, State } from "@/app/actions/project";
 
 import Link from "next/link";
 
@@ -10,17 +11,25 @@ interface EditProjectProps {
 }
 
 export default function EditProject({ project }: EditProjectProps) {
+  const initialState: State = {
+    message: null,
+    errors: {},
+  };
+
+  const [state, formAction, isPending] = useActionState(
+    async (prevState: State | undefined, formData: FormData) => {
+      return updateProject(project.id, prevState, formData);
+    },
+    initialState,
+  );
+
   return (
     <article className="rounded-2xl border border-slate-200 bg-slate-100 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <h3 className="mb-4 text-xl font-bold text-slate-800 dark:text-slate-100">
         Update Project
       </h3>
 
-      <form
-        id="update-project-form"
-        action={updateProject.bind(null, project.id)}
-        className="space-y-4"
-      >
+      <form id="update-project-form" action={formAction} className="space-y-4">
         <div>
           <label
             htmlFor="title"
@@ -106,6 +115,34 @@ export default function EditProject({ project }: EditProjectProps) {
             className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-500 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
           />
         </div>
+
+        <div>
+          <label
+            htmlFor="yearCompleted"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+          >
+            Year Completed
+          </label>
+          <input
+            id="yearCompleted"
+            name="yearCompleted"
+            type="number"
+            required
+            defaultValue={project.id ? new Date().getFullYear() : undefined}
+            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white"
+          />
+          {state.errors?.yearCompleted &&
+            state.errors.yearCompleted.map((error) => (
+              <div
+                key={error}
+                id="yearCompleted-error"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {error}
+              </div>
+            ))}
+        </div>
       </form>
 
       <div className="flex items-center justify-between pt-5">
@@ -113,9 +150,10 @@ export default function EditProject({ project }: EditProjectProps) {
           <button
             type="submit"
             form="update-project-form"
-            className="rounded-lg bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-800 dark:bg-slate-600 dark:hover:bg-slate-500"
+            disabled={isPending}
+            className="rounded-lg bg-slate-700 px-4 py-2 font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-600 dark:hover:bg-slate-500"
           >
-            Save Changes
+            {isPending ? "Saving..." : "Save Changes"}
           </button>
 
           <Link
