@@ -4,6 +4,13 @@ import {
   fetchFilteredProjects,
   fetchProjectsPages,
 } from "../../lib/projects-db";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Projects",
+  description:
+    "Browse Sebastian Bernal's web development portfolio, including school assignments and open-source projects.",
+};
 
 export default async function ProjectsPage({
   searchParams,

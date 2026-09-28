@@ -1,5 +1,12 @@
 import ProjectList from "../../../components/ProjectList";
 import { getProjects } from "../../../lib/projects-db";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Open Source Projects",
+  description:
+    "Explore open-source web development projects by Sebastian Bernal, including the technologies and work behind each project.",
+};
 
 export default async function Home() {
   const projects = await getProjects("opensource");

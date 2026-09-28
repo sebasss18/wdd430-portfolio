@@ -28,12 +28,6 @@ export default function ProjectsLayout({
         >
           OpenSource
         </Link>
-        <Link
-          href="/projects/create"
-          className="transition-all duration-300 hover:text-slate-300 active:scale-95"
-        >
-          New Project
-        </Link>
       </nav>
 
       {children}

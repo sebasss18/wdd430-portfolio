@@ -44,6 +44,15 @@ export default function NavLinks() {
           Contact
         </Link>
       </li>
+      <li>
+        <Link
+          href="/login"
+          className={pathname === "/login" ? "font-bold" : ""}
+          aria-current={pathname === "/login" ? "page" : undefined}
+        >
+          Dashboard
+        </Link>
+      </li>
     </ul>
   );
 }

@@ -1,6 +1,13 @@
 import ProjectList from "../components/ProjectList";
 import { getProjects } from "../lib/projects-db";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description:
+    "Explore Sebastian Bernal's portfolio of responsive web applications and full-stack development projects built while learning Next.js and React.",
+};
 
 export default async function Home() {
   const projects = await getProjects();

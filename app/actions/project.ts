@@ -1,10 +1,12 @@
 "use server";
 
 import { neon } from "@neondatabase/serverless";
-
+import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ProjectFormSchema } from "@/lib/schemas";
+import { signIn } from "@/auth";
+import { AuthError } from "next-auth";
 
 const sql = neon(process.env.DATABASE_URL!);
 
@@ -20,10 +22,21 @@ export type State = {
   message?: string | null;
 };
 
+async function requireOwnerSession() {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error("Not authenticated");
+  }
+
+  return session;
+}
+
 export async function createProject(
   prevState: State | undefined,
   formData: FormData,
 ): Promise<State> {
+  await requireOwnerSession();
   const data = {
     title: formData.get("title"),
     description: formData.get("description"),
@@ -65,6 +78,7 @@ export async function updateProject(
   prevState: State | undefined,
   formData: FormData,
 ): Promise<State> {
+  await requireOwnerSession();
   const data = {
     title: formData.get("title"),
     description: formData.get("description"),
@@ -107,6 +121,7 @@ export async function updateProject(
 }
 
 export async function deleteProject(id: number) {
+  await requireOwnerSession();
   try {
     await sql`
       DELETE FROM projects
@@ -118,4 +133,29 @@ export async function deleteProject(id: number) {
 
   revalidatePath("/projects");
   redirect("/projects");
+}
+
+// Authenticate
+
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    await signIn("credentials", {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      redirectTo: "/dashboard/projects",
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return "Invalid email or password.";
+        default:
+          return "Something went wrong.";
+      }
+    }
+    throw error;
+  }
 }

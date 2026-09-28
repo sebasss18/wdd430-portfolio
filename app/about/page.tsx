@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Learn about Sebastian Bernal, a web development student interested in building responsive, interactive applications and growing his development skills.",
+};
+
 export default function About() {
   return (
     <main className="mx-auto max-w-4xl min-h-screen px-4 py-12 text-slate-900 dark:bg-slate-950 dark:text-slate-100">

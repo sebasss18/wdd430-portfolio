@@ -1,6 +1,13 @@
 import { Suspense } from "react";
 import SchoolProjectList from "../../../components/SchoolProjectList";
 import ProjectCardSkeleton from "@/components/ProjectCardSkeleton";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "School Projects",
+  description:
+    "Browse web development projects Sebastian Bernal has created as part of his studies, showcasing practical coursework and technical skills.",
+};
 
 export default function Home() {
   return (
