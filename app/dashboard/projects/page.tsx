@@ -28,7 +28,7 @@ export default async function DashboardProjectsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-end gap-3 sm:flex-row sm:items-center">
           <Link
             href="/dashboard/projects/new"
             className="rounded-lg bg-slate-800 px-4 py-2 font-medium text-white hover:bg-slate-700 dark:bg-slate-600 dark:hover:bg-slate-500"
