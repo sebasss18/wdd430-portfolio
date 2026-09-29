@@ -6,7 +6,10 @@ export default function Header() {
       <div className="mr-[20px] relative mx-auto flex max-w-4xl items-center justify-between px-4">
         <NavLinks />
 
-        <div id="header-title" className="text-2xl font-bold">
+        <div
+          id="header-title"
+          className="text-2xl font-bold text-slate-800 dark:text-white"
+        >
           Sebastian Bernal
         </div>
       </div>
