@@ -7,7 +7,7 @@ export default function ProjectsLayout({
 }) {
   return (
     <section>
-      <nav className="flex gap-6 bg-slate-700 px-4 py-2 text-white mx-5 mb-3 rounded-b-xl">
+      <nav className="flex gap-6 bg-slate-700 px-4 py-2 text-white mx-5 mb-3 rounded-xl">
         <Link
           href="/projects"
           className="transition-all duration-300 hover:text-slate-300 active:scale-95"
