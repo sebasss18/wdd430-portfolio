@@ -3,6 +3,10 @@ import ProjectList from "../../../components/ProjectList";
 import { getProjects } from "../../../lib/projects-db";
 import type { Metadata } from "next";
 
+// Fuerza a Next.js a consultar la base de datos en cada request
+// en lugar de generar la página una sola vez en el build.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Open Source Projects",
   description:
