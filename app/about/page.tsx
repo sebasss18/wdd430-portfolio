@@ -13,13 +13,13 @@ export const metadata: Metadata = {
 const hobbies = [
   {
     title: "Programming",
-    text: "I love programming. Turning an idea into something people can click, swipe, and use is my favorite kind of puzzle.",
+    text: "I love programming. Turning an idea into something people can click, swipe, and use is my favorite kind of puzzle. And design it's my favorite part of it!",
     anim: "group-hover:rotate-90",
     icon: <path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14" />,
   },
   {
     title: "Music",
-    text: "I play saxophone, piano, acoustic guitar, and electric guitar. Music is how I switch off and recharge.",
+    text: "I play saxophone, piano, acoustic guitar, and electric guitar. Music is life to me.",
     anim: "group-hover:scale-125",
     icon: (
       <>
@@ -31,7 +31,7 @@ const hobbies = [
   },
   {
     title: "Video games",
-    text: "I like video games for the fun and for the design. Good games feel smooth, and I try to bring that feeling to my interfaces.",
+    text: "I like video games. Good games feel smooth, and I try to bring that feeling to my interfaces.",
     anim: "group-hover:-rotate-12 group-hover:scale-110",
     icon: (
       <>
@@ -44,7 +44,7 @@ const hobbies = [
   },
   {
     title: "Pickleball",
-    text: "I like playing pickleball. Quick rallies, good company, and a break from the screen.",
+    text: "I like playing pickleball. good company, and a break from the screen.",
     anim: "group-hover:animate-bounce",
     icon: (
       <>
