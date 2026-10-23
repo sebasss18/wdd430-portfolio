@@ -10,7 +10,7 @@ import RevealText from "../components/RevealText";
 export const metadata: Metadata = {
   title: "Home",
   description:
-    "Explore Sebastian Bernal's portfolio of responsive web applications and full-stack development projects built while learning Next.js and React.",
+    "Explore my portfolio, discover the projects I’ve built, the technologies I work with, and learn more about me as a developer.",
 };
 
 const stack = [
