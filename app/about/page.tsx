@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "../../components/Reveal";
 import RevealText from "../../components/RevealText";
-import MusicPlayground from "../../components/MusicPlayground";
 
 export const metadata: Metadata = {
   title: "About",
@@ -138,27 +137,6 @@ export default function About() {
           ))}
         </div>
       </section>
-
-      <Reveal>
-        <section className="mx-auto mt-20 max-w-5xl sm:mt-28">
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 px-5 py-12 sm:px-8 sm:py-16 dark:border-slate-800 dark:bg-slate-900">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,rgb(128_128_128/0.3)_1px,transparent_1px)] bg-[size:22px_22px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]"
-            />
-            <div className="relative">
-              <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
-                Play something
-              </h2>
-              <p className="mx-auto mt-3 mb-8 max-w-md text-center text-sm text-slate-600 sm:text-base dark:text-slate-400">
-                Pick one of the instruments I play and try the keys. It’s a tiny
-                synth, so it only hints at the real thing.
-              </p>
-              <MusicPlayground />
-            </div>
-          </div>
-        </section>
-      </Reveal>
 
       <section className="mx-auto mt-20 max-w-3xl sm:mt-28">
         <Reveal>
