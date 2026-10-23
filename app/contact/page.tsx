@@ -46,7 +46,7 @@ const groups: Group[] = [
       {
         label: "Facebook",
         value: "Sebastián Bernal",
-        href: "https://www.facebook.com/sebastian.bernal",
+        href: "https://www.facebook.com/share/1Ckd6AK73a/?mibextid=wwXIfr",
         external: true,
       },
     ],
