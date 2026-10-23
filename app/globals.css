@@ -14,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #020617;
-    --foreground: #e2e8f0;
+    --background: #000000;
+    --foreground: #ffffff;
   }
 }
 
@@ -26,6 +26,18 @@ body {
 }
 
 @theme {
+  --color-slate-50: #fafafa;
+  --color-slate-100: #f5f5f5;
+  --color-slate-200: #e5e5e5;
+  --color-slate-300: #d4d4d4;
+  --color-slate-400: #a3a3a3;
+  --color-slate-500: #737373;
+  --color-slate-600: #525252;
+  --color-slate-700: #404040;
+  --color-slate-800: #262626;
+  --color-slate-900: #171717;
+  --color-slate-950: #000000;
+
   --animate-fill: fill 3s linear forwards;
 
   @keyframes fill {
@@ -35,5 +47,58 @@ body {
     to {
       transform: scaleX(1);
     }
+  }
+}
+
+
+.reveal-ltr {
+  clip-path: inset(-0.2em 100% -0.2em 0);
+  opacity: 0;
+}
+
+.reveal-ltr[data-visible="true"] {
+  animation: reveal-ltr-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0ms)
+    both;
+}
+
+@keyframes reveal-ltr-in {
+  from {
+    clip-path: inset(-0.2em 100% -0.2em 0);
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    clip-path: inset(-0.2em -0.2em -0.2em 0);
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.reveal-fade {
+  opacity: 0;
+}
+
+.reveal-fade[data-visible="true"] {
+  animation: reveal-fade-in 0.8s cubic-bezier(0.22, 1, 0.36, 1)
+    var(--delay, 0ms) both;
+}
+
+@keyframes reveal-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ltr,
+  .reveal-fade {
+    clip-path: none;
+    opacity: 1;
+    animation: none;
   }
 }

@@ -138,7 +138,7 @@ export default function NavLinks() {
                 onClick={() => setIsOpen(false)}
                 className={`inline-block text-4xl transition-all duration-300 ease-out hover:translate-x-2 active:scale-95 md:text-base md:hover:translate-x-0 md:hover:-translate-y-0.5 ${
                   active
-                    ? "font-bold [text-shadow:0_0_14px_rgba(15,23,42,0.35)] dark:[text-shadow:0_0_14px_rgba(255,255,255,0.65),0_0_28px_rgba(255,255,255,0.3)]"
+                    ? "font-bold [text-shadow:0_0_14px_rgba(0,0,0,0.35)] dark:[text-shadow:0_0_14px_rgba(255,255,255,0.65),0_0_28px_rgba(255,255,255,0.3)]"
                     : "font-medium opacity-60 hover:opacity-100"
                 }`}
               >

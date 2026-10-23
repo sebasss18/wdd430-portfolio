@@ -51,7 +51,9 @@ export default function Revelar({
       ref={ref}
       style={{ transitionDelay: visible ? `${retraso}ms` : "0ms" }}
       className={`transition-all duration-700 ease-out ${
-        visible ? "scale-100 opacity-100" : "scale-95 opacity-0"
+        visible || prefersReducedMotion
+          ? "scale-100 opacity-100"
+          : "scale-95 opacity-0"
       } ${className}`}
     >
       {children}
