@@ -1,3 +1,4 @@
+// Página que muestra los proyectos creados como parte de los estudios.
 import { Suspense } from "react";
 import SchoolProjectList from "../../../components/SchoolProjectList";
 import ProjectCardSkeleton from "@/components/ProjectCardSkeleton";

@@ -1,3 +1,4 @@
+// Distribuye una colección de proyectos en tarjetas reutilizables.
 import ProjectCard from "./ProjectCard";
 
 interface Project {

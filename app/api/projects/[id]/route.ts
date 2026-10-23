@@ -1,3 +1,4 @@
+// Endpoint que devuelve un proyecto individual a partir de su identificador.
 import { NextResponse } from "next/server";
 import { getProjectById } from "@/lib/projects-db";
 

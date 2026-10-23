@@ -1,3 +1,4 @@
+// Esqueleto de carga para la página de biografía.
 export default function Loading() {
   return (
     <main className="mx-auto min-h-screen max-w-4xl px-4 py-12">

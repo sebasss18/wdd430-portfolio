@@ -1,3 +1,4 @@
+// Cabecera fija del sitio que contiene la navegación principal.
 import NavLinks from "./NavLinks";
 
 export default function Header() {

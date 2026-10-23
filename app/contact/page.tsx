@@ -1,3 +1,4 @@
+// Página con información y opciones para ponerse en contacto.
 import type { Metadata } from "next";
 import Reveal from "../../components/Reveal";
 import RevealText from "../../components/RevealText";

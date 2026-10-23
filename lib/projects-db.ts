@@ -1,3 +1,4 @@
+// Consultas y tipos para leer y administrar proyectos en Neon.
 import { neon } from "@neondatabase/serverless";
 
 let sql: ReturnType<typeof neon> | null = null;
@@ -51,7 +52,7 @@ export async function fetchFilteredProjects(
   query: string,
   page: number,
 ): Promise<Project[]> {
-  const ITEMS_PER_PAGE = 2;
+  const ITEMS_PER_PAGE = 4;
   const offset = (page - 1) * ITEMS_PER_PAGE;
 
   const rows = (await getSql()`

@@ -1,3 +1,4 @@
+// Esqueleto de carga para la página de contacto.
 export default function Loading() {
   return (
     <main className="mx-auto max-w-4xl min-h-screen px-4 py-12">

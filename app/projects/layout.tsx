@@ -1,3 +1,4 @@
+// Diseño compartido y pestañas de navegación para las secciones de proyectos.
 "use client";
 
 import Link from "next/link";

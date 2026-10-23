@@ -1,3 +1,4 @@
+// Esqueleto global que se muestra mientras carga una página.
 export default function Loading() {
   const bone = "rounded-full bg-slate-200 dark:bg-slate-800";
 

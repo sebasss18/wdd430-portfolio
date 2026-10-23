@@ -1,3 +1,4 @@
+// Inicializa NextAuth con credenciales y exporta sus herramientas de sesión.
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";

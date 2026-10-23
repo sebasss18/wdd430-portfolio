@@ -1,3 +1,4 @@
+// Tarjeta de contacto que presenta un título, teléfono y correo electrónico.
 interface ContactCardProps {
   title: string;
   phoneNumber: number;

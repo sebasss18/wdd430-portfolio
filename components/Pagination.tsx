@@ -1,3 +1,4 @@
+// Controles de paginación que conservan los filtros en los parámetros de ruta.
 "use client";
 
 import Link from "next/link";

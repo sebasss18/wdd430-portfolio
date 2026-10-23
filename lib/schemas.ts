@@ -1,3 +1,4 @@
+// Esquemas de validación para los datos de formularios del portafolio.
 import { z } from "zod";
 
 export const ProjectFormSchema = z.object({

@@ -1,3 +1,4 @@
+// Campo de búsqueda que sincroniza el término con los parámetros de la URL.
 "use client";
 
 import { useSearchParams, usePathname, useRouter } from "next/navigation";

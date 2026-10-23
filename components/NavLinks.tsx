@@ -1,3 +1,4 @@
+// Navegación adaptable que marca la ruta actual y controla el menú móvil.
 "use client";
 
 import Link from "next/link";

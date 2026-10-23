@@ -1,3 +1,4 @@
+// Obtiene y muestra la lista de proyectos escolares.
 import ProjectList from "./ProjectList";
 import { getProjects } from "../lib/projects-db";
 

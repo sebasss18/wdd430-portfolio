@@ -1,34 +1,41 @@
+// Formulario de inicio de sesión con estado de envío y mensajes de error.
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { authenticate } from "@/app/actions/project";
+
+const input =
+  "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-800/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder-slate-500 dark:focus:border-slate-300 dark:focus:ring-slate-300/20";
+
+const label =
+  "mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300";
 
 export function LoginForm() {
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined,
   );
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <article className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-lg shadow-slate-200/50 dark:border-slate-700 dark:bg-slate-800 dark:shadow-none">
+    <article className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm sm:rounded-3xl sm:p-8 dark:border-slate-800 dark:bg-slate-900">
       <div className="mb-7">
-        <h3 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <p className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400">
+          Dashboard
+        </p>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
           Welcome back
-        </h3>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        </h1>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
           Sign in to access your dashboard.
         </p>
       </div>
 
       <form action={formAction} className="space-y-5">
         <div>
-          <label
-            htmlFor="email"
-            className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300"
-          >
+          <label htmlFor="email" className={label}>
             Email
           </label>
-
           <input
             id="email"
             type="email"
@@ -36,35 +43,82 @@ export function LoginForm() {
             required
             autoComplete="email"
             placeholder="you@example.com"
-            className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:bg-white focus:ring-2 focus:ring-slate-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-slate-400 dark:focus:bg-slate-700"
+            className={input}
           />
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300"
-          >
+          <label htmlFor="password" className={label}>
             Password
           </label>
-
-          <input
-            id="password"
-            type="password"
-            name="password"
-            minLength={6}
-            required
-            autoComplete="current-password"
-            placeholder="Enter your password"
-            className="w-full rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:bg-white focus:ring-2 focus:ring-slate-500/20 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-slate-400 dark:focus:bg-slate-700"
-          />
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              name="password"
+              minLength={6}
+              required
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              className={`${input} pr-12`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-pressed={showPassword}
+              className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-slate-500 transition-all duration-300 hover:bg-slate-200 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+            >
+              {showPassword ? (
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.1A9.8 9.8 0 0 1 12 5c5 0 8.5 4 9.5 7a11.7 11.7 0 0 1-2.4 3.7M6.4 6.4A11.6 11.6 0 0 0 2.5 12c1 3 4.5 7 9.5 7a9.7 9.7 0 0 0 4.1-.9" />
+                </svg>
+              ) : (
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M2.5 12C3.5 9 7 5 12 5s8.5 4 9.5 7c-1 3-4.5 7-9.5 7s-8.5-4-9.5-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
 
         {errorMessage && (
           <p
             role="alert"
-            className="rounded-xl border border-neutral-300 bg-neutral-100 px-4 py-3 text-sm text-neutral-800 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
+            className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300"
           >
+            <svg
+              viewBox="0 0 24 24"
+              className="mt-0.5 h-4 w-4 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 8v5M12 16h.01" />
+            </svg>
             {errorMessage}
           </p>
         )}
@@ -73,9 +127,37 @@ export function LoginForm() {
           aria-disabled={isPending}
           disabled={isPending}
           type="submit"
-          className="w-full rounded-xl bg-slate-800 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-600 dark:hover:bg-slate-500 dark:focus:ring-offset-slate-800"
+          className="group flex h-12 w-full items-center justify-between rounded-full bg-slate-800 pl-7 pr-2 font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 dark:bg-slate-700"
         >
-          {isPending ? "Signing in..." : "Sign In"}
+          {isPending ? "Signing in..." : "Sign in"}
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-800 transition-transform duration-500 group-enabled:group-hover:-rotate-45">
+            {isPending ? (
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4 animate-spin"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                <path d="M12 3a9 9 0 1 0 9 9" />
+              </svg>
+            ) : (
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            )}
+          </span>
         </button>
       </form>
     </article>

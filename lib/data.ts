@@ -1,3 +1,4 @@
+// Acceso a los datos de usuario almacenados en la base de datos.
 import { neon } from "@neondatabase/serverless";
 
 const sql = neon(process.env.DATABASE_URL!);

@@ -1,3 +1,4 @@
+// Endpoint que devuelve la colección de proyectos, con filtro opcional por tipo.
 import { NextRequest, NextResponse } from "next/server";
 import { getProjects } from "@/lib/projects-db";
 

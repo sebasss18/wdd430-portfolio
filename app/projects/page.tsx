@@ -1,3 +1,4 @@
+// Catálogo de proyectos con búsqueda, filtros y paginación.
 import Pagination from "@/components/Pagination";
 import ProjectList from "@/components/ProjectList";
 import {

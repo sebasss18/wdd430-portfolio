@@ -1,3 +1,4 @@
+// Contador animado que incrementa hasta el valor indicado.
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";

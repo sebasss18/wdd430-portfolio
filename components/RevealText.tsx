@@ -1,3 +1,4 @@
+// Texto animado que aparece progresivamente al desplazarse por la página.
 "use client";
 
 import {

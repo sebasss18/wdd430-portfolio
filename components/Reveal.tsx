@@ -1,3 +1,4 @@
+// Contenedor que revela sus elementos al entrar en el área visible.
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";

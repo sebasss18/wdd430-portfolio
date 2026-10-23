@@ -1,3 +1,4 @@
+// Página principal que presenta el perfil, proyectos destacados y tecnologías.
 import ProjectCarousel from "../components/ProjectCarousel";
 import Reveal from "../components/Reveal";
 import { getProjects } from "../lib/projects-db";

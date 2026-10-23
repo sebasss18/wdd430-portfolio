@@ -1,3 +1,4 @@
+// Carrusel de proyectos destacados que permite cambiar de tarjeta con arrastre.
 "use client";
 
 import Link from "next/link";
@@ -5,8 +6,8 @@ import { useRef, useState } from "react";
 
 type Project = { id: string | number; title: string; type: string };
 
-const SWIPE_THRESHOLD = 50; // px que hay que arrastrar para cambiar de tarjeta
-const DRAG_START = 8; // px antes de considerar que es un arrastre (y no un tap)
+const SWIPE_THRESHOLD = 50;
+const DRAG_START = 8;
 
 export default function ProjectCarousel({ projects }: { projects: Project[] }) {
   const [index, setIndex] = useState(0);
@@ -40,8 +41,6 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
     if (!moved.current && Math.abs(dx) > DRAG_START) {
       moved.current = true;
       setDragging(true);
-      // Capturamos el puntero solo cuando ya es un arrastre,
-      // así los taps normales sobre los links siguen funcionando.
       e.currentTarget.setPointerCapture(e.pointerId);
     }
     if (moved.current) setDragX(dx);
@@ -64,7 +63,6 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
   return (
     <section
       aria-label="Featured projects"
-      // Solo pausa con mouse real: en móvil mouseenter se queda "pegado" tras un tap
       onPointerEnter={(e) => e.pointerType === "mouse" && setPaused(true)}
       onPointerLeave={(e) => e.pointerType === "mouse" && setPaused(false)}
       onFocus={(e) => e.target.matches(":focus-visible") && setPaused(true)}
@@ -76,7 +74,6 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
         onPointerUp={onPointerUp}
         onPointerCancel={resetDrag}
         onClickCapture={(e) => {
-          // Si fue un arrastre, no dispares el click del link
           if (moved.current) {
             e.preventDefault();
             e.stopPropagation();
@@ -112,18 +109,37 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                       setIndex(i);
                     }
                   }}
-                  className={`group flex h-52 flex-col justify-between rounded-3xl border p-6 transition-[scale,translate,opacity,background-color,border-color] duration-[900ms] ease-[cubic-bezier(0.25,1.12,0.35,1)] sm:h-56 sm:p-8 sm:duration-[1100ms] ${
+                  className={`group relative isolate flex h-52 flex-col justify-between overflow-hidden rounded-3xl border p-6 transition-[scale,translate,opacity,background-color,border-color] duration-[900ms] ease-[cubic-bezier(0.25,1.12,0.35,1)] sm:h-56 sm:p-8 sm:duration-[1100ms] ${
                     active
                       ? "scale-100 border-slate-400 bg-white opacity-100 hover:-translate-y-1.5 hover:border-slate-800 dark:border-slate-500 dark:bg-slate-900 dark:hover:border-slate-200"
                       : "scale-90 border-slate-200 bg-slate-50 opacity-40 dark:border-slate-800 dark:bg-slate-900"
                   }`}
                 >
+                  {active && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 -z-10 origin-bottom scale-y-0 bg-slate-800 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-y-100 motion-reduce:transition-none dark:bg-white"
+                    />
+                  )}
+
                   <div className="flex items-center justify-between">
-                    <span className="text-sm tabular-nums text-slate-400 dark:text-slate-500">
+                    <span
+                      className={`text-sm tabular-nums text-slate-400 transition-colors duration-500 dark:text-slate-500 ${
+                        active
+                          ? "group-hover:text-slate-300 dark:group-hover:text-slate-500"
+                          : ""
+                      }`}
+                    >
                       {String(i + 1).padStart(2, "0")} /{" "}
                       {String(total).padStart(2, "0")}
                     </span>
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-slate-700 transition-all duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] group-hover:-rotate-45 group-hover:scale-110 group-hover:border-slate-800 group-hover:bg-slate-800 group-hover:text-white dark:border-slate-600 dark:text-slate-200 dark:group-hover:border-white dark:group-hover:bg-white dark:group-hover:text-slate-900">
+                    <span
+                      className={`flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-slate-700 transition-all duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] dark:border-slate-600 dark:text-slate-200 ${
+                        active
+                          ? "group-hover:-rotate-45 group-hover:scale-110 group-hover:border-white group-hover:bg-white group-hover:text-slate-800 dark:group-hover:border-slate-900 dark:group-hover:bg-slate-900 dark:group-hover:text-white"
+                          : ""
+                      }`}
+                    >
                       <svg
                         viewBox="0 0 24 24"
                         className="h-5 w-5"
@@ -140,13 +156,24 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                   </div>
 
                   <div>
-                    <h3 className="truncate text-2xl font-semibold tracking-tight sm:text-3xl">
+                    <h3
+                      className={`truncate text-2xl font-semibold tracking-tight transition-colors duration-500 sm:text-3xl ${
+                        active
+                          ? "group-hover:text-white dark:group-hover:text-slate-900"
+                          : ""
+                      }`}
+                    >
                       {project.title}
                     </h3>
-                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                    <p
+                      className={`mt-2 text-sm text-slate-500 transition-colors duration-500 dark:text-slate-400 ${
+                        active
+                          ? "group-hover:text-slate-300 dark:group-hover:text-slate-600"
+                          : ""
+                      }`}
+                    >
                       {project.type}
                     </p>
-                    <span className="mt-4 block h-0.5 w-8 rounded-full bg-slate-300 transition-all duration-700 ease-[cubic-bezier(0.25,1.12,0.35,1)] group-hover:w-full group-hover:bg-slate-800 dark:bg-slate-700 dark:group-hover:bg-white" />
                   </div>
                 </Link>
               </div>

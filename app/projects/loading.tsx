@@ -1,3 +1,4 @@
+// Esqueleto de carga para el catálogo de proyectos.
 export default function Loading() {
   return (
     <main className="container mx-auto min-h-screen px-4 py-12">

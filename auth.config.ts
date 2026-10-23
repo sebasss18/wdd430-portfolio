@@ -1,4 +1,4 @@
-// auth.config.ts  (project root)
+// Configuración de rutas protegidas y redirecciones para NextAuth.
 import type { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
@@ -9,15 +9,13 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
 
-      // Protect all routes under /dashboard
       const isProtected = nextUrl.pathname.startsWith("/dashboard");
 
       if (isProtected) {
         if (isLoggedIn) return true;
-        return false; // redirects to /login
+        return false;
       }
 
-      // Redirect already-logged-in users away from the login page
       if (isLoggedIn && nextUrl.pathname === "/login") {
         return Response.redirect(new URL("/dashboard/projects", nextUrl));
       }
@@ -25,5 +23,5 @@ export const authConfig = {
       return true;
     },
   },
-  providers: [], // providers are added in auth.ts
+  providers: [],
 } satisfies NextAuthConfig;

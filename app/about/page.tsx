@@ -1,3 +1,4 @@
+// Página con la biografía, intereses personales y actividades del portafolio.
 import type { Metadata } from "next";
 import Link from "next/link";
 import Reveal from "../../components/Reveal";

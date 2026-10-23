@@ -1,3 +1,4 @@
+// Estructura raíz del sitio con metadatos, cabecera, contenido y pie de página.
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "../components/Header";

@@ -1,3 +1,4 @@
+// Acciones del servidor para autenticar y crear, actualizar o eliminar proyectos.
 "use server";
 
 import { neon } from "@neondatabase/serverless";
@@ -134,8 +135,6 @@ export async function deleteProject(id: number) {
   revalidatePath("/projects");
   redirect("/projects");
 }
-
-// Authenticate
 
 export async function authenticate(
   prevState: string | undefined,
