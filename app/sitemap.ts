@@ -1,11 +1,7 @@
-import type { MetadataRoute } from "next";
-
-const siteUrl = "https://wdd430-portfolio-sable.vercel.app";
-
-export default function sitemap(): MetadataRoute.Sitemap {
+export default function sitemap() {
   return [
     {
-      url: siteUrl,
+      url: "https://sebasss18portfolio.vercel.app",
       lastModified: new Date(),
     },
   ];

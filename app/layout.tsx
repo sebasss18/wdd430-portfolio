@@ -3,7 +3,7 @@ import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-const siteUrl = "https://wdd430-portfolio-sable.vercel.app";
+const siteUrl = "https://sebasss18portfolio.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   description:
     "Explore Sebastian Bernal's web development portfolio, featuring school and open-source projects built with modern web technologies.",
   alternates: { canonical: "/" },
+  verification: { google: "BIxXKhdQTuV2Po11cd_o_HuRzsoXN14lu0eMEluQwyw" },
   openGraph: {
     type: "website",
     url: siteUrl,
