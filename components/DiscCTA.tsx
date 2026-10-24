@@ -6,7 +6,6 @@ import Link from "next/link";
 
 type Props = {
   href: string;
-  eyebrow?: string;
   title?: string;
 };
 
@@ -22,7 +21,8 @@ const PLANETS = [
   { name: "Neptune", orbit: 146, size: 2.3, duration: 190, start: 40 },
 ];
 
-const easeInOut = (t: number) =>
+const easeOutSine = (t: number) => Math.sin((t * Math.PI) / 2);
+const easeInOutCubic = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
 export default function DiscCTA({
@@ -34,7 +34,11 @@ export default function DiscCTA({
   const discRef = useRef<HTMLDivElement>(null);
   const planetRefs = useRef<(SVGGElement | null)[]>([]);
   const busy = useRef(false);
+
+  // Estado de la animación compartido entre el loop y el click
   const speedTarget = useRef(1);
+  const speedRef = useRef(1);
+  const anglesRef = useRef(PLANETS.map((p) => p.start));
 
   // Un solo loop: rotación continua con velocidad suavizada
   useEffect(() => {
@@ -43,8 +47,6 @@ export default function DiscCTA({
     ).matches;
     if (reduce) return;
 
-    const angles = PLANETS.map((p) => p.start);
-    let speed = 1;
     let last = performance.now();
     let raf = 0;
     let visible = true;
@@ -54,9 +56,12 @@ export default function DiscCTA({
       last = now;
 
       if (visible) {
-        speed += (speedTarget.current - speed) * Math.min(dt * 2.5, 1);
+        speedRef.current +=
+          (speedTarget.current - speedRef.current) * Math.min(dt * 2.5, 1);
+        const angles = anglesRef.current;
         PLANETS.forEach((p, i) => {
-          angles[i] = (angles[i] + (360 / p.duration) * speed * dt) % 360;
+          angles[i] =
+            (angles[i] + (360 / p.duration) * speedRef.current * dt) % 360;
           planetRefs.current[i]?.setAttribute(
             "transform",
             `rotate(${angles[i].toFixed(3)} 150 150)`,
@@ -108,9 +113,10 @@ export default function DiscCTA({
     const k = rOpen / r0; // escala necesaria para cubrir la pantalla
     const dx = vw / 2 - cx;
     const dy = vh / 2 - cy;
-    const color = getComputedStyle(disc).backgroundColor;
 
-    // --- Clon del disco: es lo que viaja y crece ---
+    const DURATION = 1100;
+
+    // --- Clon del disco: viaja, crece y luego se perfora ---
     const clone = disc.cloneNode(true) as HTMLDivElement;
     clone.classList.add("disc-clone");
     Object.assign(clone.style, {
@@ -125,23 +131,35 @@ export default function DiscCTA({
       transformOrigin: "50% 50%",
       willChange: "transform",
     });
-
-    // Los planetas del clon siguen girando, más rápido
-    clone.querySelectorAll<SVGGElement>(".disc-body").forEach((el, i) => {
-      el.style.animation = `disc-spin ${PLANETS[i].duration / 8}s linear infinite`;
-    });
-
     document.body.appendChild(clone);
 
-    const DURATION = 1200;
+    // Los planetas del clon continúan desde su ángulo actual y bajan
+    // poco a poco a una velocidad menor, sin detenerse nunca.
+    const clonePlanets = Array.from(
+      clone.querySelectorAll<SVGGElement>("[data-planet]"),
+    );
+    const angles = [...anglesRef.current];
+    const s0 = Math.max(speedRef.current, 1);
+    const sEnd = 0.6; // velocidad final: más lenta, pero nunca detenida
+    const t0 = performance.now();
+    let lastT = t0;
+    let alive = true;
 
-    // El contenido se desvanece hacia la mitad del recorrido
-    Array.from(clone.children).forEach((child) => {
-      (child as HTMLElement).animate(
-        [{ opacity: 1 }, { opacity: 1, offset: 0.45 }, { opacity: 0 }],
-        { duration: DURATION, easing: "ease-in-out", fill: "forwards" },
-      );
-    });
+    const brake = (now: number) => {
+      if (!alive) return;
+      const dt = Math.min((now - lastT) / 1000, 0.05);
+      lastT = now;
+      const t = Math.min((now - t0) / DURATION, 1);
+      const s = s0 + (sEnd - s0) * easeOutSine(t);
+
+      clonePlanets.forEach((el, i) => {
+        angles[i] = (angles[i] + (360 / PLANETS[i].duration) * s * dt) % 360;
+        el.setAttribute("transform", `rotate(${angles[i].toFixed(3)} 150 150)`);
+      });
+
+      requestAnimationFrame(brake);
+    };
+    requestAnimationFrame(brake);
 
     // 1) El disco viaja al centro de la pantalla mientras crece
     const zoom = clone.animate(
@@ -156,37 +174,32 @@ export default function DiscCTA({
       },
     );
 
-    // 2) Se abre un hueco desde el centro que revela la página nueva
-    const openHole = (cover: HTMLDivElement) => {
-      const duration = 1100;
+    // 2) Un hueco circular se abre desde el centro y borra el disco,
+    //    revelando la página nueva que ya está debajo.
+    //    La máscara está en coordenadas locales del clon (radio r0).
+    const openHole = () => {
+      const duration = 1300;
       const start = performance.now();
 
       const frame = (now: number) => {
         const t = Math.min((now - start) / duration, 1);
-        const r = easeInOut(t) * rOpen;
-        const mask = `radial-gradient(circle at 50% 50%, transparent ${r}px, #000 ${r + 1}px)`;
-        cover.style.maskImage = mask;
-        cover.style.webkitMaskImage = mask;
+        const r = easeInOutCubic(t) * (r0 + 2);
+        // Borde nítido: sin degradado entre el hueco y el disco
+        const mask = `radial-gradient(circle at 50% 50%, transparent ${r}px, #000 ${r + 0.5}px)`;
+        clone.style.maskImage = mask;
+        clone.style.webkitMaskImage = mask;
 
-        if (t < 1) requestAnimationFrame(frame);
-        else cover.remove();
+        if (t < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          alive = false; // detiene el giro de los planetas
+          clone.remove();
+        }
       };
       requestAnimationFrame(frame);
     };
 
     zoom.onfinish = () => {
-      // Capa sólida del mismo color que el disco: el cambio es imperceptible
-      const cover = document.createElement("div");
-      Object.assign(cover.style, {
-        position: "fixed",
-        inset: "0",
-        background: color,
-        zIndex: "9999",
-        pointerEvents: "all",
-      });
-      document.body.appendChild(cover);
-      clone.remove();
-
       router.push(href);
 
       const started = Date.now();
@@ -194,7 +207,10 @@ export default function DiscCTA({
         const arrived = window.location.pathname === href;
         if (arrived || Date.now() - started > 3000) {
           clearInterval(timer);
-          setTimeout(() => openHole(cover), 250);
+          // Dos frames + una pausa corta: la página nueva ya está pintada
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => setTimeout(openHole, 150)),
+          );
         }
       }, 50);
     };
@@ -216,7 +232,6 @@ export default function DiscCTA({
           0%, 100% { opacity: 0.55; transform: scale(1); }
           50%      { opacity: 1;    transform: scale(1.06); }
         }
-        @keyframes disc-spin { to { transform: rotate(360deg); } }
 
         .disc-orbit,
         .disc-body {
@@ -226,6 +241,7 @@ export default function DiscCTA({
         .disc-sun { animation: disc-sun-breathe 7s ease-in-out infinite; }
 
         .disc-clone .disc-orbit,
+        .disc-clone .disc-body,
         .disc-clone .disc-sun { animation: none; }
 
         @media (prefers-reduced-motion: reduce) {
@@ -273,6 +289,7 @@ export default function DiscCTA({
           {PLANETS.map((p, i) => (
             <g
               key={p.name}
+              data-planet={i}
               ref={(el) => {
                 planetRefs.current[i] = el;
               }}
@@ -305,9 +322,9 @@ export default function DiscCTA({
           ))}
         </svg>
 
-        {/* Contenido central (siempre centrado, sin parallax) */}
+        {/* Contenido central */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-[26%] text-center">
-          <h2 className="mt-2 text-xl font-semibold leading-tight tracking-tight sm:mt-3 sm:text-3xl">
+          <h2 className="text-xl font-semibold leading-tight tracking-tight sm:text-3xl">
             {title}
           </h2>
 
