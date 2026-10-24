@@ -75,6 +75,7 @@ export default function NavLinks() {
         aria-label="Toggle navigation"
         aria-expanded={isOpen}
         aria-controls="main-menu"
+        data-face-sleep
       >
         <span
           className={`${bar} ${

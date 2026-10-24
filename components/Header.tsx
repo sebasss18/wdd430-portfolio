@@ -1,5 +1,6 @@
 // Cabecera fija del sitio que contiene la navegación principal.
 import NavLinks from "./NavLinks";
+import FollowFace from "./FollowFace";
 
 export default function Header() {
   return (
@@ -10,9 +11,10 @@ export default function Header() {
 
         <div
           id="header-title"
-          className="text-xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-2xl"
+          className="flex items-center gap-2 text-xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-2xl"
         >
           Sebastian Bernal
+          <FollowFace size={50} color="currentColor" />
         </div>
       </div>
     </header>
