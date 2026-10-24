@@ -3,7 +3,7 @@ import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-const siteUrl = "https://sebasss18portfolio.vercel.app";
+const siteUrl = "https://sebsss18portfolio.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
