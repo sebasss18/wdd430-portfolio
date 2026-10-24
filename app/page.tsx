@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Contador from "../components/NumberCounter";
 import RevealText from "../components/RevealText";
+import DiscCTA from "../components/DiscCTA";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -125,38 +126,7 @@ export default async function Home() {
 
       <Reveal>
         <section className="mx-auto mt-16 max-w-5xl px-5 sm:mt-28 sm:px-4">
-          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 px-5 py-12 text-center sm:rounded-3xl sm:px-6 sm:py-16 dark:border-slate-800 dark:bg-slate-900">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,rgb(128_128_128/0.3)_1px,transparent_1px)] bg-[size:22px_22px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]"
-            />
-            <h2 className="relative text-2xl font-bold tracking-tight sm:text-4xl">
-              Let’s build something together
-            </h2>
-            <p className="relative mx-auto mt-3 max-w-md text-sm text-slate-600 sm:mt-4 sm:text-base dark:text-slate-400">
-              Have an idea or a project in mind? I’d like to hear about it.
-            </p>
-            <Link
-              href="/contact"
-              className="group relative mt-6 inline-flex items-center gap-3 rounded-full bg-slate-800 py-3 pl-8 pr-4 font-bold text-white transition-all duration-300 hover:scale-105 active:scale-95 sm:mt-8 dark:bg-slate-700"
-            >
-              Get in touch
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-800 transition-transform duration-500 group-hover:-rotate-45">
-                <svg
-                  viewBox="0 0 24 24"
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14M13 6l6 6-6 6" />
-                </svg>
-              </span>
-            </Link>
-          </div>
+          <DiscCTA href="/contact" />
         </section>
       </Reveal>
     </main>
