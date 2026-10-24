@@ -27,7 +27,6 @@ const easeInOut = (t: number) =>
 
 export default function DiscCTA({
   href,
-  eyebrow = "Contact",
   title = "Let’s build something together",
 }: Props) {
   const router = useRouter();
@@ -308,9 +307,6 @@ export default function DiscCTA({
 
         {/* Contenido central (siempre centrado, sin parallax) */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-[26%] text-center">
-          <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-slate-500 sm:text-xs dark:text-slate-400">
-            {eyebrow}
-          </p>
           <h2 className="mt-2 text-xl font-semibold leading-tight tracking-tight sm:mt-3 sm:text-3xl">
             {title}
           </h2>
