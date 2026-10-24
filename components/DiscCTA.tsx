@@ -102,6 +102,21 @@ export default function DiscCTA({
       return;
     }
 
+    const DURATION = 1100;
+
+    // --- Clon del disco: viaja, crece y luego se perfora ---
+    const clone = disc.cloneNode(true) as HTMLDivElement;
+    clone.classList.add("disc-clone");
+
+    Array.from(clone.children).forEach((child) => {
+      (child as HTMLElement).animate([{ opacity: 1 }, { opacity: 0 }], {
+        delay: DURATION * 0.1,
+        duration: DURATION * 2,
+        easing: "ease-in-out",
+        fill: "both",
+      });
+    });
+
     const rect = disc.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
@@ -114,11 +129,6 @@ export default function DiscCTA({
     const dx = vw / 2 - cx;
     const dy = vh / 2 - cy;
 
-    const DURATION = 1100;
-
-    // --- Clon del disco: viaja, crece y luego se perfora ---
-    const clone = disc.cloneNode(true) as HTMLDivElement;
-    clone.classList.add("disc-clone");
     Object.assign(clone.style, {
       position: "fixed",
       left: `${rect.left}px`,
