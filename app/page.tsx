@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import Contador from "../components/NumberCounter";
 import RevealText from "../components/RevealText";
 import DiscCTA from "../components/DiscCTA";
+import Intro from "@/components/intro";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -42,6 +43,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen overflow-x-hidden py-6 text-slate-900 sm:py-12 dark:bg-slate-950 dark:text-slate-100">
+      <Intro />
       <section className="relative px-5 py-10 text-center sm:px-4 sm:py-16">
         <div
           aria-hidden="true"
