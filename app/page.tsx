@@ -8,6 +8,8 @@ import Contador from "../components/NumberCounter";
 import RevealText from "../components/RevealText";
 import DiscCTA from "../components/DiscCTA";
 import Intro from "@/components/intro";
+import HeroTitle from "@/components/HeroTitle";
+import SoftText from "@/components/SoftText";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -39,8 +41,7 @@ export default async function Home() {
   ];
 
   const eyebrow =
-    "text-xs font-medium uppercase tracking-widest text-slate-500 sm:text-sm dark:text-slate-400";
-
+    "font-label text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:text-xs dark:text-slate-400";
   return (
     <main className="min-h-screen overflow-x-hidden py-6 text-slate-900 sm:py-12 dark:bg-slate-950 dark:text-slate-100">
       <Intro />
@@ -56,16 +57,14 @@ export default async function Home() {
           </span>
         </Reveal>
 
-        <Reveal retraso={120}>
-          <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-bold leading-tight tracking-tight sm:mt-6 sm:text-6xl">
-            Hi, I’m Sebastian Bernal
-          </h1>
-        </Reveal>
+        <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-bold leading-tight tracking-tight sm:mt-6 sm:text-6xl">
+          <HeroTitle />
+        </h1>
 
-        <RevealText className="mx-auto mt-4 max-w-xl text-base text-slate-600 sm:mt-6 sm:text-lg dark:text-slate-400">
-          I build responsive, interactive web applications with Next.js and
-          React. These are some of the projects I’ve worked on.
-        </RevealText>
+        <SoftText
+          className="mx-auto mt-4 max-w-xl text-base text-slate-600 sm:mt-6 sm:text-lg dark:text-slate-400"
+          text="I build responsive, interactive web applications with Next.js and React. These are some of the projects I’ve worked on."
+        />
       </section>
 
       <Reveal>
@@ -76,14 +75,14 @@ export default async function Home() {
         <div className="mt-10 flex flex-col items-center gap-3 px-5 sm:mt-14 sm:flex-row sm:justify-center sm:px-4">
           <Link
             href="/projects"
-            className="w-full max-w-sm rounded-full border border-slate-300 bg-white px-10 py-3 text-center font-bold text-slate-900 shadow-sm transition-all duration-300 hover:scale-105 hover:bg-slate-100 hover:shadow-lg active:scale-95 sm:w-auto sm:max-w-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
+            className="w-full max-w-sm rounded-full border border-slate-300 bg-white px-10 py-3 text-center font-bold text-slate-900 shadow-sm transition-all duration-300 hover:scale-103 hover:border-slate-900 hover:bg-slate-900 hover:text-white hover:shadow-lg active:scale-95 sm:w-auto sm:max-w-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-100 dark:hover:bg-slate-100 dark:hover:text-slate-900"
           >
             More Projects →
           </Link>
 
           <Link
             href="/contact"
-            className="w-full max-w-sm rounded-full border border-slate-800 bg-slate-800 px-10 py-3 text-center font-bold text-white shadow-sm transition-all duration-300 hover:scale-105 hover:bg-slate-700 hover:shadow-lg active:scale-95 sm:w-auto sm:max-w-none dark:border-slate-700 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+            className="w-full max-w-sm max-w-sm rounded-full border border-slate-800 bg-slate-800 px-10 py-3 text-center font-bold text-white shadow-sm transition-all duration-300 hover:scale-102 hover:border-white hover:bg-white hover:text-slate-900 hover:shadow-lg active:scale-95 sm:w-auto sm:max-w-none dark:border-slate-700 dark:bg-slate-700 dark:text-slate-100 dark:hover:border-slate-100 dark:hover:bg-slate-100 dark:hover:text-slate-900"
           >
             Contact Me
           </Link>
@@ -118,7 +117,7 @@ export default async function Home() {
         <div className="mt-6 flex flex-wrap justify-center gap-2 sm:mt-8">
           {stack.map((tech, i) => (
             <Reveal key={tech} retraso={i * 60}>
-              <span className="block rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-all duration-300 hover:-translate-y-1 hover:border-slate-800 hover:bg-slate-800 hover:text-white sm:px-4 sm:py-2 sm:text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-white dark:hover:bg-white dark:hover:text-slate-900">
+              <span className="block rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-all duration-300 hover:scale-105 hover:border-slate-800 hover:bg-slate-800 hover:text-white sm:px-4 sm:py-2 sm:text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-white dark:hover:bg-white dark:hover:text-slate-900 cursor-default">
                 {tech}
               </span>
             </Reveal>

@@ -16,8 +16,7 @@ export const metadata: Metadata = {
 };
 
 const eyebrow =
-  "text-xs font-medium uppercase tracking-widest text-slate-500 sm:text-sm dark:text-slate-400";
-
+  "font-label text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:text-xs dark:text-slate-400";
 export default async function DashboardProjectsPage() {
   const session = await auth();
   const user = session?.user;
@@ -109,7 +108,7 @@ export default async function DashboardProjectsPage() {
                 {projects.map((project, i) => (
                   <li key={project.id}>
                     <Reveal retraso={Math.min(i, 6) * 60}>
-                      <div className="group relative flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-white hover:shadow-lg motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-600 dark:hover:bg-slate-800">
+                      <div className="group relative flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm transition-all duration-300 hover:scale-101 hover:border-slate-400 hover:bg-white hover:shadow-lg motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-600 dark:hover:bg-slate-800">
                         <div className="flex min-w-0 items-center gap-4">
                           <span className="w-6 shrink-0 text-sm tabular-nums text-slate-400 dark:text-slate-500">
                             {String(i + 1).padStart(2, "0")}

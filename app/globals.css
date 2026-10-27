@@ -102,3 +102,7 @@ body {
     animation: none;
   }
 }
+
+@theme inline {
+  --font-label: var(--font-josefin), ui-sans-serif, sans-serif;
+}

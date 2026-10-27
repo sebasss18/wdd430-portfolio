@@ -113,7 +113,7 @@ export default function Contact() {
               <Reveal retraso={g * 100}>
                 <h2
                   id={`${group.title}-heading`}
-                  className="mb-4 text-xs font-medium uppercase tracking-widest text-slate-500 sm:text-sm dark:text-slate-400"
+                  className="mb-4 font-label text-sm uppercase tracking-[0.35em] text-slate-500 sm:text-base dark:text-slate-400"
                 >
                   {group.title}
                 </h2>

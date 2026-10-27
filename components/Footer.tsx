@@ -66,7 +66,7 @@ export default function Footer() {
             </div>
 
             <nav aria-label="Footer" className="sm:mx-auto">
-              <p className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              <p className="font-label text-sm uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">
                 Navigate
               </p>
               <ul className="mt-3 space-y-2">
@@ -85,7 +85,7 @@ export default function Footer() {
             </nav>
 
             <div className="sm:ml-auto">
-              <p className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400">
+              <p className="font-label text-sm uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">
                 Connect
               </p>
               <div className="mt-3 flex justify-center gap-2 sm:justify-start">
@@ -96,7 +96,7 @@ export default function Footer() {
                     target={s.href.startsWith("http") ? "_blank" : undefined}
                     rel="noopener noreferrer"
                     aria-label={s.label}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-700 transition-all duration-300 hover:-translate-y-1 hover:border-slate-800 hover:bg-slate-800 hover:text-white active:scale-95 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-white dark:hover:bg-white dark:hover:text-slate-900"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-700 transition-all duration-300 hover:scale-105 hover:border-slate-800 hover:bg-slate-800 hover:text-white active:scale-95 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-white dark:hover:bg-white dark:hover:text-slate-900"
                   >
                     <svg
                       viewBox="0 0 24 24"

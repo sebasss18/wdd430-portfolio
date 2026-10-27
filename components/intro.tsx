@@ -9,7 +9,6 @@ const STEPS = [120, 90, 160, 100, 200, 110, 90, 170, 100, 130, 140, 180];
 const PATH_A = "M325 193 H264 A82 82 0 0 0 264 357 H325";
 const PATH_B = "M258 275 H321 A82 82 0 0 1 321 439 H258";
 
-const SKIP_SCRIPT = `(function(){try{var n=performance.getEntriesByType("navigation")[0];if((n&&n.type==="reload")||sessionStorage.getItem("intro-seen")==="1"||matchMedia("(prefers-reduced-motion: reduce)").matches){var e=document.getElementById("intro-root");if(e)e.style.display="none"}}catch(x){}})();`;
 
 function shouldSkip() {
   try {
@@ -237,7 +236,6 @@ export default function Intro() {
         <Cover drawn={drawn} phase={phase} />
         <Progress drawn={drawn} filled={filled} phase={phase} />
       </div>
-      <script dangerouslySetInnerHTML={{ __html: SKIP_SCRIPT }} />
     </>
   );
 }
