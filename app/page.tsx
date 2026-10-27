@@ -10,7 +10,6 @@ import DiscCTA from "../components/DiscCTA";
 import Intro from "@/components/intro";
 import HeroTitle from "@/components/HeroTitle";
 import SoftText from "@/components/SoftText";
-import Hero from "@/components/Hero";
 
 export const metadata: Metadata = {
   title: "Home",
