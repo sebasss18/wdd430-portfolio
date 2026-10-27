@@ -18,6 +18,7 @@ export type State = {
     type?: string[];
     technologies?: string[];
     link?: string[];
+    liveUrl?: string[];
     yearCompleted?: string[];
   };
   message?: string | null;
@@ -44,6 +45,7 @@ export async function createProject(
     type: formData.get("type"),
     technologies: formData.get("technologies"),
     link: formData.get("link"),
+    liveUrl: formData.get("liveUrl"),
     yearCompleted: formData.get("yearCompleted"),
   };
 
@@ -56,13 +58,20 @@ export async function createProject(
     };
   }
 
-  const { title, description, type, technologies, link, yearCompleted } =
-    validation.data;
+  const {
+    title,
+    description,
+    type,
+    technologies,
+    link,
+    liveUrl,
+    yearCompleted,
+  } = validation.data;
 
   try {
     await sql`
-      INSERT INTO projects (title, description, type, technologies, link, year_completed)
-      VALUES (${title}, ${description}, ${type}, ${technologies}, ${link || null}, ${yearCompleted})
+      INSERT INTO projects (title, description, type, technologies, link, live_url, year_completed)
+      VALUES (${title}, ${description}, ${type}, ${technologies}, ${link || null}, ${liveUrl || null}, ${yearCompleted})
     `;
   } catch {
     return {
@@ -86,6 +95,7 @@ export async function updateProject(
     type: formData.get("type"),
     technologies: formData.get("technologies"),
     link: formData.get("link"),
+    liveUrl: formData.get("liveUrl"),
     yearCompleted: formData.get("yearCompleted"),
   };
 
@@ -98,7 +108,15 @@ export async function updateProject(
     };
   }
 
-  const { title, description, type, technologies, link } = validation.data;
+  const {
+    title,
+    description,
+    type,
+    technologies,
+    link,
+    liveUrl,
+    yearCompleted,
+  } = validation.data;
 
   try {
     await sql`
@@ -107,7 +125,9 @@ export async function updateProject(
           description = ${description}, 
           type = ${type}, 
           technologies = ${technologies}, 
-          link = ${link || null}
+          link = ${link || null},
+          live_url = ${liveUrl || null},
+          year_completed = ${yearCompleted}
       WHERE id = ${id}
     `;
   } catch {

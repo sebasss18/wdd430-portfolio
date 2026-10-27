@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  animate,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+} from "framer-motion";
 
 type Phase = "hidden" | "loading" | "ready" | "opening";
 
@@ -8,7 +14,6 @@ const TOTAL = 12;
 const STEPS = [120, 90, 160, 100, 200, 110, 90, 170, 100, 130, 140, 180];
 const PATH_A = "M325 193 H264 A82 82 0 0 0 264 357 H325";
 const PATH_B = "M258 275 H321 A82 82 0 0 1 321 439 H258";
-
 
 function shouldSkip() {
   try {
@@ -25,13 +30,79 @@ function shouldSkip() {
   }
 }
 
-function Cover({ drawn, phase }: { drawn: boolean; phase: Phase }) {
+function isLite() {
+  try {
+    return window.matchMedia("(pointer: coarse), (max-width: 639px)").matches;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Fondo para móvil: un div normal (sin máscara SVG animada, que es lo que
+ * causaba el lag). Usa overscan para cubrir SIEMPRE toda la pantalla aunque
+ * la barra del navegador móvil aparezca/desaparezca.
+ */
+function LiteBackdrop({ opening }: { opening: boolean }) {
+  return (
+    <motion.div
+      aria-hidden="true"
+      className="fixed -inset-x-2 -bottom-40 -top-40 z-50 bg-white dark:bg-slate-950"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: opening ? 0 : 1 }}
+      transition={
+        opening
+          ? { duration: 0.7, delay: 0.25, ease: "easeInOut" }
+          : { duration: 0 }
+      }
+    >
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, rgba(128,128,128,0.35) 1px, transparent 1.6px)",
+          backgroundSize: "22px 22px",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at center, black 30%, transparent 72%)",
+          maskImage:
+            "radial-gradient(ellipse at center, black 30%, transparent 72%)",
+        }}
+      />
+    </motion.div>
+  );
+}
+
+function Cover({
+  drawn,
+  phase,
+  lite,
+}: {
+  drawn: boolean;
+  phase: Phase;
+  lite: boolean;
+}) {
   const opening = phase === "opening";
-  const factor = opening ? 140 : phase === "ready" ? 0.9 : 1;
-  const transform = `translate(-2.5px,-40px) scale(calc(var(--s) * ${factor})) translate(2.5px,40px)`;
-  const transition = opening
-    ? "transform 1400ms cubic-bezier(0.76,0,0.24,1)"
-    : "transform 450ms cubic-bezier(0.34,1.56,0.64,1)";
+
+  // framer-motion mueve el valor sin re-renders de React (GPU transform).
+  const k = useMotionValue(1);
+  const transform = useMotionTemplate`translate(-2.5px,-40px) scale(calc(var(--s) * ${k})) translate(2.5px,40px)`;
+
+  useEffect(() => {
+    if (phase === "ready") {
+      const c = animate(k, 0.9, {
+        type: "spring",
+        stiffness: 320,
+        damping: 18,
+      });
+      return () => c.stop();
+    }
+    if (phase === "opening") {
+      const c = lite
+        ? animate(k, 1.15, { duration: 0.6, ease: "easeOut" })
+        : animate(k, 140, { duration: 1.4, ease: [0.76, 0, 0.24, 1] });
+      return () => c.stop();
+    }
+  }, [phase, lite, k]);
 
   const draw = (delay: number) => ({
     strokeDashoffset: drawn ? 0 : 1,
@@ -40,111 +111,114 @@ function Cover({ drawn, phase }: { drawn: boolean; phase: Phase }) {
   });
 
   return (
-    <svg
-      className="fixed inset-0 z-50 h-full w-full text-slate-900 [--s:0.34] sm:[--s:0.44] dark:text-slate-100"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <radialGradient id="intro-fade" r="0.75">
-          <stop offset="0.3" stopColor="white" />
-          <stop offset="0.72" stopColor="black" />
-        </radialGradient>
+    <>
+      {lite && <LiteBackdrop opening={opening} />}
 
-        <mask id="intro-fade-mask">
-          <rect width="100%" height="100%" fill="url(#intro-fade)" />
-        </mask>
+      <svg
+        className="fixed inset-0 z-50 h-full w-full text-slate-900 [--s:0.34] sm:[--s:0.44] dark:text-slate-100"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {!lite && (
+          <defs>
+            <radialGradient id="intro-fade" r="0.75">
+              <stop offset="0.3" stopColor="white" />
+              <stop offset="0.72" stopColor="black" />
+            </radialGradient>
 
-        <pattern
-          id="intro-dots"
-          width="22"
-          height="22"
-          patternUnits="userSpaceOnUse"
-        >
-          <circle
-            cx="11"
-            cy="11"
-            r="1"
-            fill="rgb(128,128,128)"
-            fillOpacity="0.35"
-          />
-        </pattern>
+            <mask id="intro-fade-mask">
+              <rect width="100%" height="100%" fill="url(#intro-fade)" />
+            </mask>
 
-        <mask
-          id="intro-hole"
-          maskUnits="userSpaceOnUse"
-          x="0"
-          y="0"
-          width="100%"
-          height="100%"
-        >
-          <rect width="100%" height="100%" fill="white" />
-          <svg x="50%" y="50%" overflow="visible">
-            <g style={{ transform, transition, opacity: opening ? 1 : 0 }}>
-              <g
-                transform="translate(-292.5 -315)"
-                fill="none"
-                stroke="black"
-                strokeWidth={54}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d={PATH_A} />
-                <path d={PATH_B} />
-              </g>
-            </g>
-          </svg>
-        </mask>
-      </defs>
+            <pattern
+              id="intro-dots"
+              width="22"
+              height="22"
+              patternUnits="userSpaceOnUse"
+            >
+              <circle
+                cx="11"
+                cy="11"
+                r="1"
+                fill="rgb(128,128,128)"
+                fillOpacity="0.35"
+              />
+            </pattern>
 
-      <g mask="url(#intro-hole)">
-        <rect
-          width="100%"
-          height="100%"
-          className="fill-white dark:fill-slate-950"
-        />
-        <rect
-          width="100%"
-          height="100%"
-          fill="url(#intro-dots)"
-          mask="url(#intro-fade-mask)"
-        />
-      </g>
+            <mask
+              id="intro-hole"
+              maskUnits="userSpaceOnUse"
+              x="0"
+              y="0"
+              width="100%"
+              height="100%"
+            >
+              <rect width="100%" height="100%" fill="white" />
+              <svg x="50%" y="50%" overflow="visible">
+                <motion.g style={{ transform, opacity: opening ? 1 : 0 }}>
+                  <g
+                    transform="translate(-292.5 -315)"
+                    fill="none"
+                    stroke="black"
+                    strokeWidth={54}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d={PATH_A} />
+                    <path d={PATH_B} />
+                  </g>
+                </motion.g>
+              </svg>
+            </mask>
+          </defs>
+        )}
 
-      <svg x="50%" y="50%" overflow="visible">
-        <g
-          style={{
-            transform,
-            transition,
-          }}
-        >
-          <g
-            transform="translate(-292.5 -315)"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={54}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{
-              opacity: opening ? 0 : 1,
-              transition: opening ? "opacity 500ms ease-in 200ms" : "none",
-            }}
-          >
-            <path
-              d={PATH_A}
-              pathLength={1}
-              strokeDasharray="1 1"
-              style={draw(0)}
+        {!lite && (
+          <g mask="url(#intro-hole)">
+            <rect
+              width="100%"
+              height="100%"
+              className="fill-white dark:fill-slate-950"
             />
-            <path
-              d={PATH_B}
-              pathLength={1}
-              strokeDasharray="1 1"
-              style={draw(350)}
+            <rect
+              width="100%"
+              height="100%"
+              fill="url(#intro-dots)"
+              mask="url(#intro-fade-mask)"
             />
           </g>
-        </g>
+        )}
+
+        <svg x="50%" y="50%" overflow="visible">
+          <motion.g style={{ transform }}>
+            <g
+              transform="translate(-292.5 -315)"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={54}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{
+                opacity: opening ? 0 : 1,
+                transition: opening ? "opacity 500ms ease-in 200ms" : "none",
+              }}
+            >
+              <path
+                d={PATH_A}
+                pathLength={1}
+                strokeDasharray="1 1"
+                style={draw(0)}
+              />
+              <path
+                d={PATH_B}
+                pathLength={1}
+                strokeDasharray="1 1"
+                style={draw(350)}
+              />
+            </g>
+          </motion.g>
+        </svg>
       </svg>
-    </svg>
+    </>
   );
 }
 
@@ -162,22 +236,25 @@ function Progress({
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-1/2 z-[51] mt-24 flex justify-center px-5 sm:mt-28">
-      <div
-        className={`flex flex-col items-center gap-3 transition-all duration-500 ${
-          visible ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-        }`}
+      <motion.div
+        className="flex flex-col items-center gap-3"
+        initial={false}
+        animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 12 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <div className="h-px w-40 bg-slate-200 sm:w-52 dark:bg-slate-800">
-          <div
-            className="h-full origin-left bg-slate-900 transition-transform duration-200 ease-out dark:bg-slate-100"
-            style={{ transform: `scaleX(${filled / TOTAL})` }}
+          <motion.div
+            className="h-full origin-left bg-slate-900 dark:bg-slate-100"
+            initial={false}
+            animate={{ scaleX: filled / TOTAL }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
           />
         </div>
 
         <span className="font-mono text-[10px] tabular-nums tracking-widest text-slate-500 sm:text-xs dark:text-slate-400">
           {String(percent).padStart(3, "0")}
         </span>
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -186,6 +263,8 @@ export default function Intro() {
   const [phase, setPhase] = useState<Phase>("loading");
   const [drawn, setDrawn] = useState(false);
   const [filled, setFilled] = useState(0);
+  // Por defecto versión ligera (móvil); en desktop se cambia en el effect.
+  const [lite, setLite] = useState(true);
   const skip = useRef<boolean | null>(null);
 
   useEffect(() => {
@@ -195,6 +274,8 @@ export default function Intro() {
       setPhase("hidden");
       return;
     }
+
+    setLite(isLite());
 
     try {
       sessionStorage.setItem("intro-seen", "1");
@@ -231,11 +312,9 @@ export default function Intro() {
   if (phase === "hidden") return null;
 
   return (
-    <>
-      <div id="intro-root" aria-hidden="true" suppressHydrationWarning>
-        <Cover drawn={drawn} phase={phase} />
-        <Progress drawn={drawn} filled={filled} phase={phase} />
-      </div>
-    </>
+    <div id="intro-root" aria-hidden="true" suppressHydrationWarning>
+      <Cover drawn={drawn} phase={phase} lite={lite} />
+      <Progress drawn={drawn} filled={filled} phase={phase} />
+    </div>
   );
 }

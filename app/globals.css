@@ -154,3 +154,102 @@ body {
     animation: none;
   }
 }
+
+.win {
+  transition: transform 0.35s cubic-bezier(0.25, 1.2, 0.35, 1);
+}
+
+@media (min-width: 640px) {
+  .win {
+    transform: perspective(900px) rotateY(-6deg) rotateX(2deg);
+  }
+  .group:hover .win {
+    transform: perspective(900px) rotateY(0deg) rotateX(0deg) scale(1.03);
+  }
+}
+
+@keyframes peek {
+  0%,
+  12% {
+    transform: translate3d(0, 0, 0);
+  }
+  88%,
+  100% {
+    transform: translate3d(0, min(0px, calc(100cqh - 100%)), 0);
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.94);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.peek {
+  animation: peek 7s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+
+.group:hover .peek {
+  animation-play-state: running;
+}
+
+@media (hover: none) {
+  .peek {
+    animation-play-state: running;
+  }
+}
+
+.pop {
+  animation: pop 0.8s cubic-bezier(0.25, 1.2, 0.35, 1) backwards;
+}
+
+.rise > * {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.rise > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.peek .shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(148 163 184 / 0.25),
+    transparent
+  );
+  animation: shimmer 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .peek,
+  .pop,
+  .rise > *,
+  .peek .shimmer::after {
+    animation: none;
+  }
+}

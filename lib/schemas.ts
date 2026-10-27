@@ -1,4 +1,3 @@
-// Esquemas de validación para los datos de formularios del portafolio.
 import { z } from "zod";
 
 export const ProjectFormSchema = z.object({
@@ -15,6 +14,7 @@ export const ProjectFormSchema = z.object({
         .filter(Boolean),
     ),
   link: z.string().url("Invalid URL").optional().or(z.literal("")),
+  liveUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
   yearCompleted: z.coerce
     .number()
     .int("Year must be a whole number")

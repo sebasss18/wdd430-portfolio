@@ -1,4 +1,3 @@
-// Formulario interactivo para editar o eliminar un proyecto existente.
 "use client";
 
 import { useActionState, useState } from "react";
@@ -89,9 +88,6 @@ export default function EditProject({ project }: EditProjectProps) {
     .split(",")
     .map((t) => t.trim())
     .filter(Boolean);
-
-  const savedYear = (project as Project & { yearCompleted?: number })
-    .yearCompleted;
 
   return (
     <article className="rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm sm:rounded-3xl sm:p-8 dark:border-slate-800 dark:bg-slate-900">
@@ -211,31 +207,51 @@ export default function EditProject({ project }: EditProjectProps) {
               aria-describedby="link-error"
               aria-invalid={errorsOf("link").length > 0}
               className={`mt-1.5 ${input}`}
-              placeholder="https://example.com"
+              placeholder="https://github.com/user/repo"
             />
             <FieldErrors name="link" errors={errorsOf("link")} />
           </div>
 
           <div>
-            <label htmlFor="yearCompleted" className={label}>
-              Year completed
+            <label htmlFor="liveUrl" className={label}>
+              Live site{" "}
+              <span className="font-normal text-slate-500 dark:text-slate-400">
+                (optional)
+              </span>
             </label>
             <input
-              id="yearCompleted"
-              name="yearCompleted"
-              type="number"
-              inputMode="numeric"
-              required
-              defaultValue={savedYear ?? new Date().getFullYear()}
-              aria-describedby="yearCompleted-error"
-              aria-invalid={errorsOf("yearCompleted").length > 0}
+              type="url"
+              id="liveUrl"
+              name="liveUrl"
+              defaultValue={project.liveUrl || ""}
+              aria-describedby="liveUrl-error"
+              aria-invalid={errorsOf("liveUrl").length > 0}
               className={`mt-1.5 ${input}`}
+              placeholder="https://example.com"
             />
-            <FieldErrors
-              name="yearCompleted"
-              errors={errorsOf("yearCompleted")}
-            />
+            <FieldErrors name="liveUrl" errors={errorsOf("liveUrl")} />
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="yearCompleted" className={label}>
+            Year completed
+          </label>
+          <input
+            id="yearCompleted"
+            name="yearCompleted"
+            type="number"
+            inputMode="numeric"
+            required
+            defaultValue={project.yearCompleted ?? new Date().getFullYear()}
+            aria-describedby="yearCompleted-error"
+            aria-invalid={errorsOf("yearCompleted").length > 0}
+            className={`mt-1.5 ${input}`}
+          />
+          <FieldErrors
+            name="yearCompleted"
+            errors={errorsOf("yearCompleted")}
+          />
         </div>
       </form>
 

@@ -1,7 +1,8 @@
-// Consultas y tipos para leer y administrar proyectos en Neon.
 import { neon } from "@neondatabase/serverless";
 
 let sql: ReturnType<typeof neon> | null = null;
+
+const ITEMS_PER_PAGE = 4;
 
 function getSql() {
   if (!sql) {
@@ -23,26 +24,39 @@ export interface Project {
   description: string;
   type: "opensource" | "school";
   technologies: string[];
-  link?: string;
+  link: string | null;
+  liveUrl: string | null;
+  image: string | null;
+  yearCompleted: number | null;
 }
 
 export async function getProjects(type?: string | null): Promise<Project[]> {
   if (type) {
     const rows = (await getSql()`
-      SELECT * FROM projects WHERE type = ${type} ORDER BY id
+      SELECT id, title, description, type, technologies, link,
+        live_url AS "liveUrl", image, year_completed AS "yearCompleted"
+      FROM projects
+      WHERE type = ${type}
+      ORDER BY id
     `) as Project[];
     return rows;
   }
 
   const rows = (await getSql()`
-    SELECT * FROM projects ORDER BY id
+    SELECT id, title, description, type, technologies, link,
+      live_url AS "liveUrl", image, year_completed AS "yearCompleted"
+    FROM projects
+    ORDER BY id
   `) as Project[];
   return rows;
 }
 
 export async function getProjectById(id: number): Promise<Project | null> {
   const rows = (await getSql()`
-    SELECT * FROM projects WHERE id = ${id}
+    SELECT id, title, description, type, technologies, link,
+      live_url AS "liveUrl", image, year_completed AS "yearCompleted"
+    FROM projects
+    WHERE id = ${id}
   `) as Project[];
 
   return rows[0] ?? null;
@@ -52,11 +66,11 @@ export async function fetchFilteredProjects(
   query: string,
   page: number,
 ): Promise<Project[]> {
-  const ITEMS_PER_PAGE = 4;
   const offset = (page - 1) * ITEMS_PER_PAGE;
 
   const rows = (await getSql()`
-    SELECT *
+    SELECT id, title, description, type, technologies, link,
+      live_url AS "liveUrl", image, year_completed AS "yearCompleted"
     FROM projects
     WHERE
       title ILIKE ${`%${query}%`}
@@ -71,8 +85,6 @@ export async function fetchFilteredProjects(
 }
 
 export async function fetchProjectsPages(query: string): Promise<number> {
-  const ITEMS_PER_PAGE = 2;
-
   const rows = (await getSql()`
     SELECT COUNT(*) AS count
     FROM projects

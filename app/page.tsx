@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import Contador from "../components/NumberCounter";
 import RevealText from "../components/RevealText";
 import DiscCTA from "../components/DiscCTA";
-import Intro from "@/components/intro";
+import Intro from "@/components/Intro";
 import HeroTitle from "@/components/HeroTitle";
 import SoftText from "@/components/SoftText";
 
@@ -30,9 +30,23 @@ const stack = [
   "Git",
 ];
 
+const labels: Record<string, string> = {
+  school: "School project",
+  opensource: "Open source",
+};
+
 export default async function Home() {
   const projects = await getProjects();
   const categories = new Set(projects.map((p) => p.type)).size;
+
+  const carouselProjects = projects.map((p) => ({
+    id: p.id,
+    title: p.title.trim(),
+    type: labels[p.type] ?? p.type,
+    preview: p.liveUrl ?? undefined,
+    url: p.liveUrl ?? p.link ?? undefined,
+    tags: p.technologies,
+  }));
 
   const stats = [
     { value: projects.length, label: "Projects" },
@@ -68,7 +82,7 @@ export default async function Home() {
       </section>
 
       <Reveal>
-        <ProjectCarousel projects={projects} />
+        <ProjectCarousel projects={carouselProjects} />
       </Reveal>
 
       <Reveal>

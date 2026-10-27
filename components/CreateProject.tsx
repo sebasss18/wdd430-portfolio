@@ -1,4 +1,3 @@
-// Formulario interactivo para validar y crear un proyecto del portafolio.
 "use client";
 
 import { useActionState, useState } from "react";
@@ -183,31 +182,47 @@ export default function CreateProject() {
               aria-describedby="link-error"
               aria-invalid={fieldErrors("link").length > 0}
               className={`mt-1.5 ${input}`}
-              placeholder="https://example.com"
+              placeholder="https://github.com/user/repo"
             />
             <Errors name="link" errors={fieldErrors("link")} />
           </div>
 
           <div>
-            <label htmlFor="yearCompleted" className={label}>
-              Year completed
+            <label htmlFor="liveUrl" className={label}>
+              Live site{" "}
+              <span className="font-normal text-slate-500 dark:text-slate-400">
+                (optional)
+              </span>
             </label>
             <input
-              id="yearCompleted"
-              name="yearCompleted"
-              type="number"
-              inputMode="numeric"
-              required
-              aria-describedby="yearCompleted-error"
-              aria-invalid={fieldErrors("yearCompleted").length > 0}
+              type="url"
+              id="liveUrl"
+              name="liveUrl"
+              aria-describedby="liveUrl-error"
+              aria-invalid={fieldErrors("liveUrl").length > 0}
               className={`mt-1.5 ${input}`}
-              placeholder={String(new Date().getFullYear())}
+              placeholder="https://example.com"
             />
-            <Errors
-              name="yearCompleted"
-              errors={fieldErrors("yearCompleted")}
-            />
+            <Errors name="liveUrl" errors={fieldErrors("liveUrl")} />
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="yearCompleted" className={label}>
+            Year completed
+          </label>
+          <input
+            id="yearCompleted"
+            name="yearCompleted"
+            type="number"
+            inputMode="numeric"
+            required
+            aria-describedby="yearCompleted-error"
+            aria-invalid={fieldErrors("yearCompleted").length > 0}
+            className={`mt-1.5 ${input}`}
+            placeholder={String(new Date().getFullYear())}
+          />
+          <Errors name="yearCompleted" errors={fieldErrors("yearCompleted")} />
         </div>
 
         <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
