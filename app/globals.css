@@ -106,3 +106,51 @@ body {
 @theme inline {
   --font-label: var(--font-josefin), ui-sans-serif, sans-serif;
 }
+
+@keyframes drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(48px, 36px, 0);
+  }
+}
+
+@keyframes drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-44px, -32px, 0);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.drift-a {
+  animation: drift-a 16s ease-in-out infinite;
+  will-change: transform;
+}
+
+.drift-b {
+  animation: drift-b 20s ease-in-out infinite;
+  will-change: transform;
+}
+
+.marquee {
+  animation: marquee 32s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drift-a,
+  .drift-b,
+  .marquee {
+    animation: none;
+  }
+}
