@@ -1,8 +1,8 @@
 // Página de acceso con formulario y resumen del portafolio.
 import Link from "next/link";
-import { LoginForm } from "@/components/LoginForm";
-import LoginAside from "@/components/LoginAside";
-import Reveal from "@/components/Reveal";
+import { LoginForm } from "@/components/auth/LoginForm";
+import LoginAside from "@/components/auth/LoginAside";
+import Reveal from "@/components/effects/Reveal";
 import { getProjects } from "@/lib/projects-db";
 import type { Metadata } from "next";
 

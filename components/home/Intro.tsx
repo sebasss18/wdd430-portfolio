@@ -38,11 +38,6 @@ function isLite() {
   }
 }
 
-/**
- * Fondo para móvil: un div normal (sin máscara SVG animada, que es lo que
- * causaba el lag). Usa overscan para cubrir SIEMPRE toda la pantalla aunque
- * la barra del navegador móvil aparezca/desaparezca.
- */
 function LiteBackdrop({ opening }: { opening: boolean }) {
   return (
     <motion.div
@@ -52,7 +47,7 @@ function LiteBackdrop({ opening }: { opening: boolean }) {
       animate={{ opacity: opening ? 0 : 1 }}
       transition={
         opening
-          ? { duration: 0.7, delay: 0.25, ease: "easeInOut" }
+          ? { duration: 0.6, delay: 0.5, ease: "easeInOut" }
           : { duration: 0 }
       }
     >
@@ -83,7 +78,6 @@ function Cover({
 }) {
   const opening = phase === "opening";
 
-  // framer-motion mueve el valor sin re-renders de React (GPU transform).
   const k = useMotionValue(1);
   const transform = useMotionTemplate`translate(-2.5px,-40px) scale(calc(var(--s) * ${k})) translate(2.5px,40px)`;
 
@@ -98,7 +92,7 @@ function Cover({
     }
     if (phase === "opening") {
       const c = lite
-        ? animate(k, 1.15, { duration: 0.6, ease: "easeOut" })
+        ? animate(k, 18, { duration: 1, ease: [0.76, 0, 0.24, 1] })
         : animate(k, 140, { duration: 1.4, ease: [0.76, 0, 0.24, 1] });
       return () => c.stop();
     }
@@ -199,7 +193,11 @@ function Cover({
               strokeLinejoin="round"
               style={{
                 opacity: opening ? 0 : 1,
-                transition: opening ? "opacity 500ms ease-in 200ms" : "none",
+                transition: opening
+                  ? lite
+                    ? "opacity 450ms ease-in 450ms"
+                    : "opacity 500ms ease-in 200ms"
+                  : "none",
               }}
             >
               <path
@@ -263,7 +261,6 @@ export default function Intro() {
   const [phase, setPhase] = useState<Phase>("loading");
   const [drawn, setDrawn] = useState(false);
   const [filled, setFilled] = useState(0);
-  // Por defecto versión ligera (móvil); en desktop se cambia en el effect.
   const [lite, setLite] = useState(true);
   const skip = useRef<boolean | null>(null);
 

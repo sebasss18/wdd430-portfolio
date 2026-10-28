@@ -1,7 +1,7 @@
 // Página que muestra los proyectos creados como parte de los estudios.
 import { Suspense } from "react";
-import SchoolProjectList from "../../../components/SchoolProjectList";
-import ProjectCardSkeleton from "@/components/ProjectCardSkeleton";
+import SchoolProjectList from "@/components/projects/SchoolProjectList";
+import ProjectCardSkeleton from "@/components/projects/ProjectCardSkeleton";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -1,7 +1,7 @@
 // Página con información y opciones para ponerse en contacto.
 import type { Metadata } from "next";
-import Reveal from "../../components/Reveal";
-import RevealText from "../../components/RevealText";
+import Reveal from "@/components/effects/Reveal";
+import RevealText from "@/components/effects/RevealText";
 
 export const metadata: Metadata = {
   title: "Contact",

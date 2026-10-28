@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { getProjectById, getProjects } from "@/lib/projects-db";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Reveal from "@/components/Reveal";
+import Reveal from "@/components/effects/Reveal";
 
 const getCachedProjectById = cache(getProjectById);
 

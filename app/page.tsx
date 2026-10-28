@@ -1,15 +1,14 @@
 // Página principal que presenta el perfil, proyectos destacados y tecnologías.
-import ProjectCarousel from "../components/ProjectCarousel";
-import Reveal from "../components/Reveal";
+import ProjectCarousel from "@/components/projects/ProjectCarousel";
+import Reveal from "@/components/effects/Reveal";
 import { getProjects } from "../lib/projects-db";
 import Link from "next/link";
 import type { Metadata } from "next";
-import Contador from "../components/NumberCounter";
-import RevealText from "../components/RevealText";
-import DiscCTA from "../components/DiscCTA";
-import Intro from "@/components/Intro";
-import HeroTitle from "@/components/HeroTitle";
-import SoftText from "@/components/SoftText";
+import Contador from "@/components/home/NumberCounter";
+import DiscCTA from "@/components/home/DiscCTA";
+import Intro from "@/components/home/Intro";
+import HeroTitle from "@/components/home/HeroTitle";
+import SoftText from "@/components/home/SoftText";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -111,7 +110,7 @@ export default async function Home() {
                 <p className="text-3xl font-bold tabular-nums tracking-tight sm:text-5xl">
                   <Contador valor={stat.value} retraso={200} />
                 </p>
-                <p className="mt-1.5 text-[10px] uppercase tracking-widest text-slate-500 sm:mt-2 sm:text-xs dark:text-slate-400">
+                <p className="font-label mt-1.5 text-[10px] uppercase tracking-widest text-slate-500 sm:mt-2 sm:text-[9px] dark:text-slate-400">
                   {stat.label}
                 </p>
               </div>

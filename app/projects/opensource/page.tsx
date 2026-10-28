@@ -1,5 +1,5 @@
 // Página que lista los proyectos de código abierto del portafolio.
-import ProjectList from "../../../components/ProjectList";
+import ProjectList from "@/components/projects/ProjectList";
 import { getProjects } from "../../../lib/projects-db";
 import type { Metadata } from "next";
 export const dynamic = "force-dynamic";

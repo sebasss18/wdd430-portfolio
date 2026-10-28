@@ -1,8 +1,8 @@
 // Página con la biografía, intereses personales y actividades del portafolio.
 import type { Metadata } from "next";
 import Link from "next/link";
-import Reveal from "../../components/Reveal";
-import RevealText from "../../components/RevealText";
+import Reveal from "@/components/effects/Reveal";
+import RevealText from "@/components/effects/RevealText";
 
 export const metadata: Metadata = {
   title: "About",

@@ -78,7 +78,10 @@ function LivePreview({ src, title }: { src: string; title: string }) {
   }, []);
 
   return (
-    <div ref={box} className="absolute inset-0 overflow-hidden [contain:strict]">
+    <div
+      ref={box}
+      className="absolute inset-0 overflow-hidden [contain:strict]"
+    >
       {size && (
         <iframe
           src={src}
@@ -137,7 +140,9 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
       mounted.current = true;
       return;
     }
-    if ("vibrate" in navigator) navigator.vibrate(8);
+    if ("vibrate" in navigator && navigator.userActivation?.hasBeenActive) {
+      navigator.vibrate(8);
+    }
   }, [index]);
 
   // Solo UNA tarjeta tiene el sitio cargado, y solo cuando el carrusel se detuvo.
@@ -331,187 +336,187 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
       }}
     >
       <div className="relative mx-auto max-w-3xl">
-      <div
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={resetDrag}
-        onClickCapture={(e) => {
-          if (moved.current) {
-            e.preventDefault();
-            e.stopPropagation();
-            moved.current = false;
-          }
-        }}
-        className="cursor-grab touch-pan-y select-none overflow-hidden [--basis:86%] [--off:7%] active:cursor-grabbing sm:[--basis:80%] sm:[--off:10%]"
-      >
         <div
-          className={`flex w-full ${
-            dragging
-              ? "transition-none"
-              : "transition-transform duration-[700ms] ease-[cubic-bezier(0.25,1.12,0.35,1)] sm:duration-[900ms]"
-          }`}
-          style={{
-            transform: `translateX(calc(var(--off) - ${index} * var(--basis) + ${dragX}px))`,
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={resetDrag}
+          onClickCapture={(e) => {
+            if (moved.current) {
+              e.preventDefault();
+              e.stopPropagation();
+              moved.current = false;
+            }
           }}
+          className="cursor-grab touch-pan-y select-none overflow-hidden [--basis:86%] [--off:7%] active:cursor-grabbing sm:[--basis:80%] sm:[--off:10%]"
         >
-          {projects.map((project, i) => {
-            const active = i === index;
-            const showLive = Boolean(project.preview) && awake && live === i;
-            const host =
-              project.url?.replace(/^https?:\/\//, "").replace(/\/$/, "") ??
-              "localhost:3000";
-            return (
-              <div
-                key={project.id}
-                className="min-w-0 shrink-0 basis-[var(--basis)] px-1.5 py-4 sm:px-2"
-              >
-                <Link
-                  href="/projects"
-                  draggable={false}
-                  tabIndex={active ? undefined : -1}
-                  onClick={(e) => {
-                    if (!active) {
-                      e.preventDefault();
-                      setIndex(i);
-                    }
-                  }}
-                  onPointerMove={active ? onFx : undefined}
-                  className={`group relative isolate flex h-[26rem] w-full min-w-0 flex-col gap-4 overflow-hidden rounded-3xl border p-5 transition-[scale,translate,opacity,background-color,border-color] duration-[700ms] ease-[cubic-bezier(0.25,1.12,0.35,1)] sm:h-72 sm:flex-row sm:gap-6 sm:p-7 sm:duration-[800ms] ${
-                    active
-                      ? "scale-100 border-slate-400 bg-white opacity-100 hover:-translate-y-1.5 hover:border-slate-800 dark:border-slate-500 dark:bg-slate-900 dark:hover:border-slate-200"
-                      : "scale-90 border-slate-200 bg-slate-50 opacity-40 dark:border-slate-800 dark:bg-slate-900"
-                  }`}
+          <div
+            className={`flex w-full ${
+              dragging
+                ? "transition-none"
+                : "transition-transform duration-[700ms] ease-[cubic-bezier(0.25,1.12,0.35,1)] sm:duration-[900ms]"
+            }`}
+            style={{
+              transform: `translateX(calc(var(--off) - ${index} * var(--basis) + ${dragX}px))`,
+            }}
+          >
+            {projects.map((project, i) => {
+              const active = i === index;
+              const showLive = Boolean(project.preview) && awake && live === i;
+              const host =
+                project.url?.replace(/^https?:\/\//, "").replace(/\/$/, "") ??
+                "localhost:3000";
+              return (
+                <div
+                  key={project.id}
+                  className="min-w-0 shrink-0 basis-[var(--basis)] px-1.5 py-4 sm:px-2"
                 >
-                  {active && (
-                    <>
-                      <span
-                        aria-hidden="true"
-                        className="absolute inset-0 -z-10 origin-bottom scale-y-0 bg-slate-800 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-y-100 motion-reduce:transition-none dark:bg-white"
-                      />
-                      <canvas
-                        data-fx
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-0 z-0 h-full w-full"
-                      />
-                    </>
-                  )}
-
-                  <div
-                    className={`win relative h-48 w-full shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-900/5 sm:order-last sm:h-full sm:w-[52%] dark:border-slate-700 dark:bg-slate-950 ${
-                      active ? "pop" : ""
+                  <Link
+                    href="/projects"
+                    draggable={false}
+                    tabIndex={active ? undefined : -1}
+                    onClick={(e) => {
+                      if (!active) {
+                        e.preventDefault();
+                        setIndex(i);
+                      }
+                    }}
+                    onPointerMove={active ? onFx : undefined}
+                    className={`group relative isolate flex h-[26rem] w-full min-w-0 flex-col gap-4 overflow-hidden rounded-3xl border p-5 transition-[scale,translate,opacity,background-color,border-color] duration-[700ms] ease-[cubic-bezier(0.25,1.12,0.35,1)] sm:h-72 sm:flex-row sm:gap-6 sm:p-7 sm:duration-[800ms] ${
+                      active
+                        ? "scale-100 border-slate-400 bg-white opacity-100 hover:-translate-y-1.5 hover:border-slate-800 dark:border-slate-500 dark:bg-slate-900 dark:hover:border-slate-200"
+                        : "scale-90 border-slate-200 bg-slate-50 opacity-40 dark:border-slate-800 dark:bg-slate-900"
                     }`}
                   >
-                    <div className="flex h-6 items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-2.5 dark:border-slate-700 dark:bg-slate-900">
-                      <span className="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600" />
-                      <span className="ml-2 min-w-0 flex-1 truncate rounded bg-white px-2 text-[10px] leading-4 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
-                        {host}
-                      </span>
-                    </div>
-                    <div className="absolute inset-x-0 bottom-0 top-6 overflow-hidden bg-white dark:bg-slate-950">
-                      <div className="absolute inset-x-0 top-0">
-                        <Skeleton seed={i} />
-                      </div>
-                      {showLive && project.preview && (
-                        <LivePreview
-                          src={project.preview}
-                          title={`Preview of ${project.title}`}
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  <div
-                    className={`flex min-w-0 flex-1 flex-col justify-between ${
-                      active ? "rise" : ""
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span
-                        className={`text-sm tabular-nums text-slate-400 transition-colors duration-500 dark:text-slate-500 ${
-                          active
-                            ? "group-hover:text-slate-300 dark:group-hover:text-slate-500"
-                            : ""
-                        }`}
-                      >
-                        {String(i + 1).padStart(2, "0")} /{" "}
-                        {String(total).padStart(2, "0")}
-                      </span>
-                      <span
-                        className={`flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-slate-700 transition-all duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] dark:border-slate-600 dark:text-slate-200 ${
-                          active
-                            ? "group-hover:-rotate-45 group-hover:scale-110 group-hover:border-white group-hover:bg-white group-hover:text-slate-800 dark:group-hover:border-slate-900 dark:group-hover:bg-slate-900 dark:group-hover:text-white"
-                            : ""
-                        }`}
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          className="h-5 w-5"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                    {active && (
+                      <>
+                        <span
                           aria-hidden="true"
-                        >
-                          <path d="M5 12h14M13 6l6 6-6 6" />
-                        </svg>
-                      </span>
+                          className="absolute inset-0 -z-10 origin-bottom scale-y-0 bg-slate-800 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-y-100 motion-reduce:transition-none dark:bg-white"
+                        />
+                        <canvas
+                          data-fx
+                          aria-hidden="true"
+                          className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+                        />
+                      </>
+                    )}
+
+                    <div
+                      className={`win relative h-48 w-full shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-900/5 sm:order-last sm:h-full sm:w-[52%] dark:border-slate-700 dark:bg-slate-950 ${
+                        active ? "pop" : ""
+                      }`}
+                    >
+                      <div className="flex h-6 items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-2.5 dark:border-slate-700 dark:bg-slate-900">
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600" />
+                        <span className="ml-2 min-w-0 flex-1 truncate rounded bg-white px-2 text-[10px] leading-4 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
+                          {host}
+                        </span>
+                      </div>
+                      <div className="absolute inset-x-0 bottom-0 top-6 overflow-hidden bg-white dark:bg-slate-950">
+                        <div className="absolute inset-x-0 top-0">
+                          <Skeleton seed={i} />
+                        </div>
+                        {showLive && project.preview && (
+                          <LivePreview
+                            src={project.preview}
+                            title={`Preview of ${project.title}`}
+                          />
+                        )}
+                      </div>
                     </div>
 
-                    <div className="min-w-0">
-                      <h3
-                        className={`line-clamp-2 break-words text-2xl font-semibold leading-tight tracking-tight transition-colors duration-500 sm:text-3xl ${
-                          active
-                            ? "group-hover:text-white dark:group-hover:text-slate-900"
-                            : ""
-                        }`}
-                      >
-                        {project.title}
-                      </h3>
-                      <p
-                        className={`mt-2 text-sm text-slate-500 transition-colors duration-500 dark:text-slate-400 ${
-                          active
-                            ? "group-hover:text-slate-300 dark:group-hover:text-slate-600"
-                            : ""
-                        }`}
-                      >
-                        {project.type}
-                      </p>
-                      {project.tags && project.tags.length > 0 && (
-                        <div className="mt-3 hidden flex-wrap gap-1.5 sm:flex">
-                          {project.tags.slice(0, 3).map((tag) => (
-                            <span
-                              key={tag}
-                              className={`rounded-full border border-slate-200 px-2.5 py-0.5 text-xs text-slate-500 transition-colors duration-500 dark:border-slate-700 dark:text-slate-400 ${
-                                active
-                                  ? "group-hover:border-slate-600 group-hover:text-slate-300 dark:group-hover:border-slate-300 dark:group-hover:text-slate-600"
-                                  : ""
-                              }`}
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                    <div
+                      className={`flex min-w-0 flex-1 flex-col justify-between ${
+                        active ? "rise" : ""
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`text-sm tabular-nums text-slate-400 transition-colors duration-500 dark:text-slate-500 ${
+                            active
+                              ? "group-hover:text-slate-300 dark:group-hover:text-slate-500"
+                              : ""
+                          }`}
+                        >
+                          {String(i + 1).padStart(2, "0")} /{" "}
+                          {String(total).padStart(2, "0")}
+                        </span>
+                        <span
+                          className={`flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-slate-700 transition-all duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] dark:border-slate-600 dark:text-slate-200 ${
+                            active
+                              ? "group-hover:-rotate-45 group-hover:scale-110 group-hover:border-white group-hover:bg-white group-hover:text-slate-800 dark:group-hover:border-slate-900 dark:group-hover:bg-slate-900 dark:group-hover:text-white"
+                              : ""
+                          }`}
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <path d="M5 12h14M13 6l6 6-6 6" />
+                          </svg>
+                        </span>
+                      </div>
+
+                      <div className="min-w-0">
+                        <h3
+                          className={`line-clamp-2 break-words text-2xl font-semibold leading-tight tracking-tight transition-colors duration-500 sm:text-3xl ${
+                            active
+                              ? "group-hover:text-white dark:group-hover:text-slate-900"
+                              : ""
+                          }`}
+                        >
+                          {project.title}
+                        </h3>
+                        <p
+                          className={`mt-2 text-sm text-slate-500 transition-colors duration-500 dark:text-slate-400 ${
+                            active
+                              ? "group-hover:text-slate-300 dark:group-hover:text-slate-600"
+                              : ""
+                          }`}
+                        >
+                          {project.type}
+                        </p>
+                        {project.tags && project.tags.length > 0 && (
+                          <div className="mt-3 hidden flex-wrap gap-1.5 sm:flex">
+                            {project.tags.slice(0, 3).map((tag) => (
+                              <span
+                                key={tag}
+                                className={`rounded-full border border-slate-200 px-2.5 py-0.5 text-xs text-slate-500 transition-colors duration-500 dark:border-slate-700 dark:text-slate-400 ${
+                                  active
+                                    ? "group-hover:border-slate-600 group-hover:text-slate-300 dark:group-hover:border-slate-300 dark:group-hover:text-slate-600"
+                                    : ""
+                                }`}
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              </div>
-            );
-          })}
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[6%] bg-gradient-to-r from-white to-transparent sm:w-[8%] dark:from-slate-950"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[6%] bg-gradient-to-l from-white to-transparent sm:w-[8%] dark:from-slate-950"
-      />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[6%] bg-gradient-to-r from-white to-transparent sm:w-[8%] dark:from-slate-950"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[6%] bg-gradient-to-l from-white to-transparent sm:w-[8%] dark:from-slate-950"
+        />
       </div>
 
       <div className="mt-4 flex items-center justify-center gap-4 sm:mt-6">

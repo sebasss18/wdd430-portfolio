@@ -2,8 +2,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getProjectById } from "@/lib/projects-db";
-import EditProject from "@/components/EditProjects";
-import Reveal from "@/components/Reveal";
+import EditProject from "@/components/projects/EditProjects";
+import Reveal from "@/components/effects/Reveal";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {

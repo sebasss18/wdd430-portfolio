@@ -1,7 +1,7 @@
 // Página privada que permite añadir un proyecto al portafolio.
 import Link from "next/link";
-import CreateProject from "@/components/CreateProject";
-import Reveal from "@/components/Reveal";
+import CreateProject from "@/components/projects/CreateProject";
+import Reveal from "@/components/effects/Reveal";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

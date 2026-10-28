@@ -2,8 +2,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Reveal from "./Reveal";
-import Contador from "./NumberCounter";
+import Reveal from "../effects/Reveal";
+import Contador from "../home/NumberCounter";
 
 const stack = [
   "Next.js",

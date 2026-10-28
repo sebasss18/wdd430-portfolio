@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { auth } from "@/auth";
 import { getProjects } from "@/lib/projects-db";
-import { SignOut } from "@/components/SignOut";
-import Reveal from "@/components/Reveal";
+import { SignOut } from "@/components/auth/SignOut";
+import Reveal from "@/components/effects/Reveal";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

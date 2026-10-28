@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import Reveal from "./Reveal";
+import Reveal from "../effects/Reveal";
 
 const navLinks = [
   { href: "/", label: "Home" },

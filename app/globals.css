@@ -1,4 +1,3 @@
-/* Estilos globales, variables del tema y animaciones reutilizadas por la interfaz. */
 @import "tailwindcss";
 
 :root {
@@ -7,10 +6,7 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-label: var(--font-josefin), ui-sans-serif, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,12 +14,6 @@
     --background: #000000;
     --foreground: #ffffff;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 @theme {
@@ -51,6 +41,16 @@ body {
   }
 }
 
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 .reveal-ltr {
   clip-path: inset(-0.2em 100% -0.2em 0);
   opacity: 0;
@@ -74,87 +74,6 @@ body {
   }
 }
 
-.reveal-fade {
-  opacity: 0;
-}
-
-.reveal-fade[data-visible="true"] {
-  animation: reveal-fade-in 0.8s cubic-bezier(0.22, 1, 0.36, 1)
-    var(--delay, 0ms) both;
-}
-
-@keyframes reveal-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reveal-ltr,
-  .reveal-fade {
-    clip-path: none;
-    opacity: 1;
-    animation: none;
-  }
-}
-
-@theme inline {
-  --font-label: var(--font-josefin), ui-sans-serif, sans-serif;
-}
-
-@keyframes drift-a {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(48px, 36px, 0);
-  }
-}
-
-@keyframes drift-b {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(-44px, -32px, 0);
-  }
-}
-
-@keyframes marquee {
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-.drift-a {
-  animation: drift-a 16s ease-in-out infinite;
-  will-change: transform;
-}
-
-.drift-b {
-  animation: drift-b 20s ease-in-out infinite;
-  will-change: transform;
-}
-
-.marquee {
-  animation: marquee 32s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .drift-a,
-  .drift-b,
-  .marquee {
-    animation: none;
-  }
-}
-
 .win {
   transition: transform 0.35s cubic-bezier(0.25, 1.2, 0.35, 1);
 }
@@ -163,19 +82,11 @@ body {
   .win {
     transform: perspective(900px) rotateY(-6deg) rotateX(2deg);
   }
-  .group:hover .win {
-    transform: perspective(900px) rotateY(0deg) rotateX(0deg) scale(1.03);
-  }
 }
 
-@keyframes peek {
-  0%,
-  12% {
-    transform: translate3d(0, 0, 0);
-  }
-  88%,
-  100% {
-    transform: translate3d(0, min(0px, calc(100cqh - 100%)), 0);
+@media (min-width: 640px) and (hover: hover) {
+  .group:hover .win {
+    transform: perspective(900px) rotateY(0deg) rotateX(0deg) scale(1.03);
   }
 }
 
@@ -199,21 +110,6 @@ body {
   }
 }
 
-.peek {
-  animation: peek 7s ease-in-out infinite alternate;
-  animation-play-state: paused;
-}
-
-.group:hover .peek {
-  animation-play-state: running;
-}
-
-@media (hover: none) {
-  .peek {
-    animation-play-state: running;
-  }
-}
-
 .pop {
   animation: pop 0.8s cubic-bezier(0.25, 1.2, 0.35, 1) backwards;
 }
@@ -231,7 +127,7 @@ body {
   overflow: hidden;
 }
 
-.peek .shimmer::after {
+.shimmer::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -246,10 +142,15 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .peek,
+  .reveal-ltr {
+    clip-path: none;
+    opacity: 1;
+    animation: none;
+  }
+
   .pop,
   .rise > *,
-  .peek .shimmer::after {
+  .shimmer::after {
     animation: none;
   }
 }

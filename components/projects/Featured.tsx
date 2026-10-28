@@ -1,4 +1,4 @@
-import ProjectCarousel from "@/components/ProjectCarousel";
+import ProjectCarousel from "@/components/projects/ProjectCarousel";
 import { getProjects } from "@/lib/projects-db";
 
 const labels: Record<string, string> = {

@@ -1,6 +1,6 @@
 // Obtiene y muestra la lista de proyectos escolares.
 import ProjectList from "./ProjectList";
-import { getProjects } from "../lib/projects-db";
+import { getProjects } from "@/lib/projects-db";
 
 export default async function SchoolProjectList() {
   const projects = await getProjects("school");
