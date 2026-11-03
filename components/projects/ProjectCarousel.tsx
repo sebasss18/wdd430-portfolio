@@ -14,9 +14,7 @@ type Project = {
 
 const SWIPE_THRESHOLD = 50;
 const DRAG_START = 8;
-// Ancho del "monitor" virtual en el que se renderiza el sitio antes de reducirlo.
 const VIEWPORT_W = 1024;
-// Espera a que termine el desplazamiento antes de montar el iframe.
 const SETTLE_MS = 450;
 
 type Dot = {
@@ -32,7 +30,7 @@ type Dot = {
 function Skeleton({ seed }: { seed: number }) {
   const w = [62, 78, 54, 86][seed % 4];
   return (
-    <div className="flex h-72 flex-col gap-2.5 p-3">
+    <div className="flex h-72 flex-col gap-2.5 p-3 lg:h-[30rem] lg:gap-4 lg:p-5">
       <div className="shimmer h-16 shrink-0 rounded-lg bg-slate-100 dark:bg-slate-800" />
       <div
         className="h-2 rounded bg-slate-200 dark:bg-slate-700"
@@ -53,9 +51,6 @@ function Skeleton({ seed }: { seed: number }) {
   );
 }
 
-// Renderiza el sitio a 1024px de ancho y lo escala para que quepa exacto en la
-// ventana. Mide el contenedor con clientWidth/clientHeight (no les afectan las
-// transformaciones de las tarjetas), así el iframe nunca se sale del marco.
 function LivePreview({ src, title }: { src: string; title: string }) {
   const box = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ scale: number; h: number } | null>(null);
@@ -145,13 +140,11 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
     }
   }, [index]);
 
-  // Solo UNA tarjeta tiene el sitio cargado, y solo cuando el carrusel se detuvo.
   useEffect(() => {
     const t = setTimeout(() => setLive(index), SETTLE_MS);
     return () => clearTimeout(t);
   }, [index]);
 
-  // Si el carrusel sale de pantalla o la pestaña se oculta, se pausa todo.
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -205,7 +198,6 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
       e.currentTarget.setPointerCapture(e.pointerId);
     }
     if (moved.current) {
-      // Un solo render por frame, no uno por cada evento del puntero.
       pendingX.current = dx;
       if (!dragRaf.current) {
         dragRaf.current = requestAnimationFrame(() => {
@@ -257,8 +249,6 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
     loopId.current = list.length ? requestAnimationFrame(loop) : 0;
   };
 
-  // Solo partículas. Se quitó la inclinación 3D porque forzaba a recomponer
-  // el iframe en cada movimiento del mouse.
   const onFx = (e: React.PointerEvent<HTMLElement>) => {
     if (e.pointerType !== "mouse" || dragging) return;
     const el = e.currentTarget;
@@ -318,7 +308,10 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
   };
 
   const arrow =
-    "flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-all duration-300 hover:scale-110 hover:bg-slate-100 active:scale-90 sm:h-9 sm:w-9 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800";
+    "flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-all duration-300 hover:scale-110 hover:bg-slate-100 active:scale-90 sm:h-9 sm:w-9 lg:hidden dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800";
+
+  const side =
+    "absolute top-1/2 z-20 hidden h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white/90 text-slate-700 shadow-lg transition-all duration-300 hover:scale-110 hover:bg-slate-900 hover:text-white active:scale-95 lg:flex dark:border-slate-700 dark:bg-slate-900/90 dark:text-slate-200 dark:hover:bg-white dark:hover:text-slate-900";
 
   const isPaused = paused || dragging || !awake;
 
@@ -335,7 +328,7 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
         else if (e.key === "ArrowLeft") prev();
       }}
     >
-      <div className="relative mx-auto max-w-3xl">
+      <div className="relative mx-auto max-w-3xl lg:max-w-6xl">
         <div
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
@@ -348,7 +341,7 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
               moved.current = false;
             }
           }}
-          className="cursor-grab touch-pan-y select-none overflow-hidden [--basis:86%] [--off:7%] active:cursor-grabbing sm:[--basis:80%] sm:[--off:10%]"
+          className="cursor-grab touch-pan-y select-none overflow-hidden [--basis:86%] [--off:7%] active:cursor-grabbing sm:[--basis:80%] sm:[--off:10%] lg:[--basis:72%] lg:[--off:14%]"
         >
           <div
             className={`flex w-full ${
@@ -382,10 +375,10 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                       }
                     }}
                     onPointerMove={active ? onFx : undefined}
-                    className={`group relative isolate flex h-[26rem] w-full min-w-0 flex-col gap-4 overflow-hidden rounded-3xl border p-5 transition-[scale,translate,opacity,background-color,border-color] duration-[700ms] ease-[cubic-bezier(0.25,1.12,0.35,1)] sm:h-72 sm:flex-row sm:gap-6 sm:p-7 sm:duration-[800ms] ${
+                    className={`group relative isolate flex h-[26rem] w-full min-w-0 flex-col gap-4 overflow-hidden rounded-3xl border p-5 transition-[scale,translate,opacity,background-color,border-color] duration-[700ms] ease-[cubic-bezier(0.25,1.12,0.35,1)] sm:h-72 sm:flex-row sm:gap-6 sm:p-7 sm:duration-[800ms] lg:h-[30rem] lg:gap-10 lg:p-10 ${
                       active
                         ? "scale-100 border-slate-400 bg-white opacity-100 hover:-translate-y-1.5 hover:border-slate-800 dark:border-slate-500 dark:bg-slate-900 dark:hover:border-slate-200"
-                        : "scale-90 border-slate-200 bg-slate-50 opacity-40 dark:border-slate-800 dark:bg-slate-900"
+                        : "scale-90 border-slate-200 bg-slate-50 opacity-40 lg:opacity-60 dark:border-slate-800 dark:bg-slate-900"
                     }`}
                   >
                     {active && (
@@ -399,12 +392,20 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                           aria-hidden="true"
                           className="pointer-events-none absolute inset-0 z-0 h-full w-full"
                         />
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute -bottom-12 -left-2 z-0 hidden select-none text-[16rem] font-bold leading-none tracking-tighter text-slate-900/[0.05] transition-[translate,color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-6 group-hover:text-white/10 lg:block dark:text-white/[0.06] dark:group-hover:text-slate-900/10"
+                        >
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
                       </>
                     )}
 
                     <div
-                      className={`win relative h-48 w-full shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-900/5 sm:order-last sm:h-full sm:w-[52%] dark:border-slate-700 dark:bg-slate-950 ${
-                        active ? "pop" : ""
+                      className={`win relative h-48 w-full shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-900/5 sm:order-last sm:h-full sm:w-[52%] lg:w-[60%] lg:rounded-2xl lg:shadow-2xl dark:border-slate-700 dark:bg-slate-950 ${
+                        active
+                          ? "pop transition-[translate,scale] duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] lg:group-hover:-translate-y-2 lg:group-hover:scale-[1.03]"
+                          : ""
                       }`}
                     >
                       <div className="flex h-6 items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-2.5 dark:border-slate-700 dark:bg-slate-900">
@@ -429,13 +430,13 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                     </div>
 
                     <div
-                      className={`flex min-w-0 flex-1 flex-col justify-between ${
+                      className={`relative flex min-w-0 flex-1 flex-col justify-between ${
                         active ? "rise" : ""
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <span
-                          className={`text-sm tabular-nums text-slate-400 transition-colors duration-500 dark:text-slate-500 ${
+                          className={`text-sm tabular-nums text-slate-400 transition-colors duration-500 lg:text-base dark:text-slate-500 ${
                             active
                               ? "group-hover:text-slate-300 dark:group-hover:text-slate-500"
                               : ""
@@ -445,7 +446,7 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                           {String(total).padStart(2, "0")}
                         </span>
                         <span
-                          className={`flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-slate-700 transition-all duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] dark:border-slate-600 dark:text-slate-200 ${
+                          className={`flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-slate-700 transition-all duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] lg:h-14 lg:w-14 dark:border-slate-600 dark:text-slate-200 ${
                             active
                               ? "group-hover:-rotate-45 group-hover:scale-110 group-hover:border-white group-hover:bg-white group-hover:text-slate-800 dark:group-hover:border-slate-900 dark:group-hover:bg-slate-900 dark:group-hover:text-white"
                               : ""
@@ -453,7 +454,7 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                         >
                           <svg
                             viewBox="0 0 24 24"
-                            className="h-5 w-5"
+                            className="h-5 w-5 lg:h-6 lg:w-6"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="2"
@@ -468,7 +469,7 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
 
                       <div className="min-w-0">
                         <h3
-                          className={`line-clamp-2 break-words text-2xl font-semibold leading-tight tracking-tight transition-colors duration-500 sm:text-3xl ${
+                          className={`line-clamp-2 break-words text-2xl font-semibold leading-tight tracking-tight transition-colors duration-500 sm:text-3xl lg:text-5xl ${
                             active
                               ? "group-hover:text-white dark:group-hover:text-slate-900"
                               : ""
@@ -477,7 +478,7 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                           {project.title}
                         </h3>
                         <p
-                          className={`mt-2 text-sm text-slate-500 transition-colors duration-500 dark:text-slate-400 ${
+                          className={`mt-2 text-sm text-slate-500 transition-colors duration-500 lg:mt-3 lg:text-lg dark:text-slate-400 ${
                             active
                               ? "group-hover:text-slate-300 dark:group-hover:text-slate-600"
                               : ""
@@ -486,11 +487,11 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                           {project.type}
                         </p>
                         {project.tags && project.tags.length > 0 && (
-                          <div className="mt-3 hidden flex-wrap gap-1.5 sm:flex">
-                            {project.tags.slice(0, 3).map((tag) => (
+                          <div className="mt-3 hidden flex-wrap gap-1.5 sm:flex lg:mt-5 lg:gap-2">
+                            {project.tags.slice(0, 5).map((tag) => (
                               <span
                                 key={tag}
-                                className={`rounded-full border border-slate-200 px-2.5 py-0.5 text-xs text-slate-500 transition-colors duration-500 dark:border-slate-700 dark:text-slate-400 ${
+                                className={`rounded-full border border-slate-200 px-2.5 py-0.5 text-xs text-slate-500 transition-colors duration-500 lg:px-3.5 lg:py-1 lg:text-sm dark:border-slate-700 dark:text-slate-400 ${
                                   active
                                     ? "group-hover:border-slate-600 group-hover:text-slate-300 dark:group-hover:border-slate-300 dark:group-hover:text-slate-600"
                                     : ""
@@ -517,6 +518,45 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
           aria-hidden="true"
           className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[6%] bg-gradient-to-l from-white to-transparent sm:w-[8%] dark:from-slate-950"
         />
+
+        <button
+          type="button"
+          onClick={prev}
+          aria-label="Previous project"
+          className={`${side} left-3`}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M19 12H5M11 6l-6 6 6 6" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onClick={next}
+          aria-label="Next project"
+          className={`${side} right-3`}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </button>
       </div>
 
       <div className="mt-4 flex items-center justify-center gap-4 sm:mt-6">
@@ -551,7 +591,7 @@ export default function ProjectCarousel({ projects }: { projects: Project[] }) {
                 aria-label={`Go to ${project.title}`}
                 aria-current={active ? "true" : undefined}
                 className={`h-1.5 overflow-hidden rounded-full bg-slate-200 transition-all duration-500 dark:bg-slate-700 ${
-                  active ? "w-12" : "w-4"
+                  active ? "w-12 lg:w-16" : "w-4 lg:w-5"
                 }`}
               >
                 {active && (

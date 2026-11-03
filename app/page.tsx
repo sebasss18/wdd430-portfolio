@@ -9,9 +9,10 @@ import DiscCTA from "@/components/home/DiscCTA";
 import Intro from "@/components/home/Intro";
 import HeroTitle from "@/components/home/HeroTitle";
 import SoftText from "@/components/home/SoftText";
+import StackBubbles from "@/components/home/StackBubbles";
 
 export const metadata: Metadata = {
-  title: "Home",
+  title: { absolute: "Sebastian Bernal | Portfolio" },
   description:
     "Explore my portfolio, discover the projects I’ve built, the technologies I work with, and learn more about me as a developer.",
 };
@@ -104,9 +105,36 @@ export default async function Home() {
 
       <Reveal>
         <section className="mx-auto mt-16 max-w-5xl px-5 sm:mt-28 sm:px-4">
-          <div className="grid grid-cols-3 divide-x divide-slate-200 rounded-2xl border border-slate-200 bg-slate-50 py-6 text-center sm:rounded-3xl sm:py-8 dark:divide-slate-800 dark:border-slate-800 dark:bg-slate-900">
-            {stats.map((stat) => (
-              <div key={stat.label}>
+          <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 text-center sm:rounded-3xl dark:border-slate-800 dark:bg-slate-900">
+            {stats.map((stat, i) => (
+              <div
+                key={stat.label}
+                className="group relative isolate overflow-hidden py-6 sm:py-8"
+              >
+                {/* Separador con fade arriba y abajo */}
+                {i > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-slate-300 to-transparent dark:via-slate-700"
+                  />
+                )}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -bottom-4 -left-1 -z-10 select-none transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-4 sm:-bottom-8 sm:-left-2"
+                >
+                  <span
+                    style={{ animationDelay: `${i * -4.1}s` }}
+                    className="block animate-[stat-drift-x_13s_ease-in-out_infinite] motion-reduce:animate-none"
+                  >
+                    <span
+                      style={{ animationDelay: `${i * -6.3}s` }}
+                      className="block animate-[stat-drift-y_19s_ease-in-out_infinite] text-[5rem] font-bold leading-none tracking-tighter text-slate-900/[0.05] motion-reduce:animate-none sm:text-[10rem] dark:text-white/[0.06]"
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </span>
+                </span>
+
                 <p className="text-3xl font-bold tabular-nums tracking-tight sm:text-5xl">
                   <Contador valor={stat.value} retraso={200} />
                 </p>
@@ -127,15 +155,7 @@ export default async function Home() {
           </h2>
         </Reveal>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-2 sm:mt-8">
-          {stack.map((tech, i) => (
-            <Reveal key={tech} retraso={i * 60}>
-              <span className="block rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-all duration-300 hover:scale-105 hover:border-slate-800 hover:bg-slate-800 hover:text-white sm:px-4 sm:py-2 sm:text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-white dark:hover:bg-white dark:hover:text-slate-900 cursor-default">
-                {tech}
-              </span>
-            </Reveal>
-          ))}
-        </div>
+        <StackBubbles stack={stack} />
       </section>
 
       <Reveal>

@@ -1,23 +1,30 @@
-// Navegación adaptable que marca la ruta actual y controla el menú móvil.
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 
-const links = [
+const links: { href: string; label: string; cta?: boolean }[] = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
   { href: "/contact", label: "Contact" },
-  { href: "/login", label: "Dashboard" },
+  { href: "/login", label: "Dashboard", cta: true },
 ];
 
 export default function NavLinks() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [entered, setEntered] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
   const unlockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+
+  const current =
+    hovered ?? links.find((l) => !l.cta && isActive(l.href))?.href ?? null;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -113,38 +120,81 @@ export default function NavLinks() {
 
       <ul
         id="main-menu"
+        onPointerLeave={() => setHovered(null)}
         style={{ transitionDelay: isOpen ? "0ms" : "1000ms" }}
-        className={`fixed inset-0 z-40 flex flex-col items-start justify-center gap-7 px-8 text-slate-800 transition-[visibility] duration-0 dark:text-white md:visible md:static md:z-auto md:flex-row md:items-center md:justify-start md:gap-7 md:p-0 ${
+        className={`fixed inset-0 z-40 flex flex-col items-start justify-center gap-7 px-8 text-slate-800 transition-[visibility] duration-0 dark:text-white md:visible md:static md:z-auto md:w-fit md:flex-row md:items-center md:justify-start md:gap-1 md:rounded-full md:border md:border-slate-200 md:bg-slate-50 md:p-1 dark:md:border-slate-800 dark:md:bg-slate-900 ${
           isOpen ? "visible" : "invisible"
         }`}
       >
         {links.map((link, i) => {
-          const active = pathname === link.href;
+          const active = isActive(link.href);
           return (
             <li
               key={link.href}
+              onPointerEnter={(e) => {
+                if (e.pointerType !== "mouse") return;
+                setHovered(link.cta ? null : link.href);
+              }}
               style={{
                 transition: isOpen
                   ? `transform 700ms cubic-bezier(0.22,1,0.36,1) ${380 + i * 80}ms, opacity 700ms cubic-bezier(0.22,1,0.36,1) ${380 + i * 80}ms`
                   : `opacity 250ms ease-out ${(links.length - 1 - i) * 30}ms`,
               }}
-              className={`${
+              className={`md:relative ${
                 entered
                   ? "max-md:[transform:translateX(0)]"
                   : "max-md:[transform:translateX(-40px)]"
               } ${isOpen ? "max-md:opacity-100" : "max-md:opacity-0"}`}
             >
+              {current === link.href && (
+                <motion.span
+                  layoutId="nav-pill"
+                  aria-hidden="true"
+                  transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                  className="absolute inset-0 hidden rounded-full bg-white shadow-sm md:block dark:bg-slate-700/70 dark:shadow-none"
+                />
+              )}
               <Link
                 href={link.href}
                 aria-current={active ? "page" : undefined}
                 onClick={() => setIsOpen(false)}
-                className={`inline-block text-4xl transition-all duration-300 ease-out hover:translate-x-2 active:scale-95 md:text-base md:hover:translate-x-0 md:hover:-translate-y-0.5 ${
+                className={`group relative inline-block text-4xl transition-all duration-300 ease-out hover:translate-x-2 active:scale-95 md:rounded-full md:px-4 md:py-1.5 md:text-sm md:hover:translate-x-0 ${
+                  link.cta
+                    ? "md:isolate md:ml-1 md:inline-flex md:items-center md:justify-center md:gap-1.5 md:overflow-hidden md:bg-slate-900 md:text-white md:opacity-100 md:duration-500 md:hover:text-slate-900 dark:md:bg-white dark:md:text-slate-900 dark:md:hover:text-white"
+                    : ""
+                } ${
                   active
-                    ? "font-bold [text-shadow:0_0_14px_rgba(0,0,0,0.35)] dark:[text-shadow:0_0_14px_rgba(255,255,255,0.65),0_0_28px_rgba(255,255,255,0.3)]"
+                    ? "font-bold max-md:[text-shadow:0_0_14px_rgba(0,0,0,0.35)] dark:max-md:[text-shadow:0_0_14px_rgba(255,255,255,0.65),0_0_28px_rgba(255,255,255,0.3)]"
                     : "font-medium opacity-60 hover:opacity-100"
                 }`}
               >
+                {link.cta && (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 -z-10 hidden bg-slate-50 transition-[clip-path] duration-1500 ease-[cubic-bezier(0.22,1,0.36,1)] [clip-path:circle(0%_at_0%_50%)] group-hover:[clip-path:circle(170%_at_0%_50%)] md:block dark:bg-slate-900"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 -z-10 hidden rounded-full opacity-0 ring-1 ring-inset ring-slate-900 transition-opacity duration-500 group-hover:opacity-100 md:block dark:ring-white"
+                    />
+                  </>
+                )}
                 {link.label}
+                {link.cta && (
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="hidden h-3.5 w-3.5 shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 md:block"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M7 17 17 7M8 7h9v9" />
+                  </svg>
+                )}
               </Link>
             </li>
           );

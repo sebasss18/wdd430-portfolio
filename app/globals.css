@@ -154,3 +154,85 @@ body {
     animation: none;
   }
 }
+
+@keyframes glass-in {
+  0% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)))
+      scale(0.15);
+    border-radius: 999px;
+  }
+  55% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.07, 0.95);
+    border-radius: 2.75rem;
+  }
+  78% {
+    transform: translate(-50%, -50%) scale(0.98, 1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 2rem;
+  }
+}
+
+@keyframes glass-out {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 2rem;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)))
+      scale(0.15);
+    border-radius: 999px;
+  }
+}
+
+@keyframes glass-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes glass-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* keyframes for the stats */
+
+@keyframes stat-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(12px, -16px, 0) rotate(-2deg); }
+}
+
+@keyframes stat-sheen {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes stat-glow {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.25); }
+}
+
+
+@keyframes stat-drift-x {
+  0%, 100% { transform: translateX(-8px); }
+  50% { transform: translateX(8px); }
+}
+
+@keyframes stat-drift-y {
+  0%, 100% { transform: translateY(6px); }
+  50% { transform: translateY(-6px); }
+}
