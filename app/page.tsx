@@ -3,19 +3,12 @@ import ProjectCarousel from "@/components/projects/ProjectCarousel";
 import Reveal from "@/components/effects/Reveal";
 import { getProjects } from "../lib/projects-db";
 import Link from "next/link";
-import type { Metadata } from "next";
 import Contador from "@/components/home/NumberCounter";
 import DiscCTA from "@/components/home/DiscCTA";
 import Intro from "@/components/home/Intro";
 import HeroTitle from "@/components/home/HeroTitle";
 import SoftText from "@/components/home/SoftText";
 import StackBubbles from "@/components/home/StackBubbles";
-
-export const metadata: Metadata = {
-  title: { absolute: "Sebastian Bernal | Portfolio" },
-  description:
-    "Explore my portfolio, discover the projects I’ve built, the technologies I work with, and learn more about me as a developer.",
-};
 
 const stack = [
   "Next.js",

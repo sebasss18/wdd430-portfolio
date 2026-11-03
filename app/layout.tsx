@@ -15,11 +15,11 @@ const siteUrl = "https://sebsss18portfolio.vercel.app";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Sebastian Bernal | Project Portfolio",
+    default: "Sebastian Bernal | Portfolio",
     template: "%s | Sebastian Bernal",
   },
   description:
-    "Explore Sebastian Bernal's web development portfolio, featuring school and open-source projects built with modern web technologies.",
+    "Full stack developer who cares about the details nobody notices until they're missing. Projects, stack and a bit about me.",
   alternates: { canonical: "/" },
   verification: { google: "BIxXKhdQTuV2Po11cd_o_HuRzsoXN14lu0eMEluQwyw" },
   openGraph: {
