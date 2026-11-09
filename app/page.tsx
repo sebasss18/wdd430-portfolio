@@ -9,6 +9,7 @@ import Intro from "@/components/home/Intro";
 import HeroTitle from "@/components/home/HeroTitle";
 import SoftText from "@/components/home/SoftText";
 import StackBubbles from "@/components/home/StackBubbles";
+import CustomCursor from "@/components/layout/CustomCursor";
 
 const stack = [
   "Next.js",
@@ -52,6 +53,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden py-6 text-slate-900 sm:py-12 dark:bg-slate-950 dark:text-slate-100">
       <Intro />
+      <CustomCursor />
       <section className="relative px-5 py-10 text-center sm:px-4 sm:py-16">
         <div
           aria-hidden="true"
