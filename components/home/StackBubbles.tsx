@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+// Presenta tecnologías como burbujas que se expanden en una tarjeta animada.
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "motion/react";
 import Reveal from "@/components/effects/Reveal";
 
@@ -74,11 +75,11 @@ export default function StackBubbles({ stack }: { stack: string[] }) {
     });
   };
 
-  const close = () => {
+  const close = useCallback(() => {
     if (!active || !expanded) return;
     setActive({ ...active, box: measure(active.el) });
     setExpanded(false);
-  };
+  }, [active, expanded]);
 
   const finish = () => {
     if (expanded) return;
@@ -102,8 +103,7 @@ export default function StackBubbles({ stack }: { stack: string[] }) {
       document.body.style.overflow = prevOverflow;
       document.body.style.paddingRight = prevPadding;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, expanded]);
+  }, [active, close, expanded]);
 
   return (
     <>

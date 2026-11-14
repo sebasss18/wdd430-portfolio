@@ -1,8 +1,13 @@
-// Página con la biografía, intereses personales y actividades del portafolio.
+// Página biográfica con intereses personales y escenas visuales interactivas.
 import type { Metadata } from "next";
-import Link from "next/link";
 import Reveal from "@/components/effects/Reveal";
 import RevealText from "@/components/effects/RevealText";
+import DotField from "@/components/effects/DotField";
+import Parallax from "@/components/effects/Parallax";
+import SplitTitle from "@/components/effects/SplitTitle";
+import CodeScene from "@/components/effects/CodeScene";
+import OrbitScroll from "@/components/effects/OrbitScroll";
+import ScrollRuler from "@/components/effects/ScrollRuler";
 
 export const metadata: Metadata = {
   title: "About",
@@ -14,48 +19,86 @@ const hobbies = [
   {
     title: "Programming",
     text: "I love programming. Turning an idea into something people can click, swipe, and use is my favorite kind of puzzle. And design it's my favorite part of it!",
-    anim: "group-hover:rotate-90",
-    icon: <path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14" />,
+    icon: (
+      <>
+        <rect x="2.5" y="4" width="19" height="16" rx="3" />
+        <path d="M2.5 8.5h19" />
+        <path d="M7 12l3 2.5L7 17" />
+        <path d="M12.5 17H17" />
+      </>
+    ),
   },
   {
     title: "Music",
     text: "I play saxophone, piano, acoustic guitar, and electric guitar. Music is life to me.",
-    anim: "group-hover:scale-125",
     icon: (
       <>
-        <path d="M9.5 18V6l10-2v12" />
-        <circle cx="7" cy="18" r="2.5" />
-        <circle cx="17" cy="16" r="2.5" />
+        <circle cx="7" cy="17.5" r="2.3" />
+        <circle cx="17" cy="15.5" r="2.3" />
+        <path d="M9.3 17.5V6.5" />
+        <path d="M19.3 15.5V4.5" />
+        <path d="M9.3 6.5l10-2" />
+        <path d="M9.3 10l10-2" />
       </>
     ),
   },
   {
     title: "Video games",
     text: "I like video games. Good games feel smooth, and I try to bring that feeling to my interfaces.",
-    anim: "group-hover:-rotate-12 group-hover:scale-110",
     icon: (
       <>
-        <rect x="2" y="7" width="20" height="11" rx="5.5" />
-        <path d="M7 10v4M5 12h4" />
-        <circle cx="16" cy="11" r="0.8" />
-        <circle cx="18.5" cy="13.5" r="0.8" />
+        <path d="M7 6.5h10a4.5 4.5 0 0 1 4.4 5.4l-.9 4.2a2.8 2.8 0 0 1-4.8 1.3l-2.1-1.9h-3.2l-2.1 1.9a2.8 2.8 0 0 1-4.8-1.3l-.9-4.2A4.5 4.5 0 0 1 7 6.5z" />
+        <path d="M7 10v3.5M5.25 11.75h3.5" />
+        <circle cx="16" cy="10.5" r="0.7" />
+        <circle cx="18" cy="12.5" r="0.7" />
       </>
     ),
   },
   {
     title: "Pickleball",
     text: "I like playing pickleball. good company, and a break from the screen.",
-    anim: "group-hover:animate-bounce",
     icon: (
       <>
-        <circle cx="12" cy="12" r="9" />
-        <circle cx="9" cy="9" r="0.9" />
-        <circle cx="15" cy="9" r="0.9" />
-        <circle cx="12" cy="12" r="0.9" />
-        <circle cx="9" cy="15" r="0.9" />
-        <circle cx="15" cy="15" r="0.9" />
+        <g transform="rotate(-35 10 11)">
+          <rect x="5" y="2.5" width="10" height="12.5" rx="5" />
+          <path d="M10 15v5.5M8.5 20.5h3" />
+          <circle cx="8.5" cy="7" r="0.55" />
+          <circle cx="11.5" cy="7" r="0.55" />
+          <circle cx="10" cy="10" r="0.55" />
+        </g>
+        <circle cx="18.5" cy="6" r="2.8" />
+        <circle cx="17.6" cy="5.2" r="0.45" />
+        <circle cx="19.4" cy="5.2" r="0.45" />
+        <circle cx="18.5" cy="7" r="0.45" />
       </>
     ),
+  },
+];
+
+const layouts = [
+  {
+    box: "items-end justify-start pb-24 sm:pb-32",
+    text: "items-start text-left",
+    num: "right-0",
+    speed: -14,
+  },
+  {
+    box: "items-start justify-end pt-28 sm:pt-36",
+    text: "items-end text-right",
+    num: "left-0",
+    speed: 12,
+  },
+  {
+    box: "items-center justify-start sm:pl-[8vw]",
+    text: "items-start text-left",
+    num: "right-0",
+    speed: -20,
+  },
+  {
+    box: "items-end justify-end pb-24 sm:pb-32",
+    text: "items-end text-right",
+    num: "left-0",
+    speed: 16,
   },
 ];
 
@@ -69,114 +112,57 @@ const profileCode = `const sebastian = {
 
 export default function About() {
   return (
-    <main className="min-h-screen overflow-x-hidden px-5 py-10 text-slate-900 sm:px-4 sm:py-16 dark:bg-slate-950 dark:text-slate-100">
-      <style>{`
-        @keyframes about-note {
-          0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-          20% { opacity: 1; }
-          100% { transform: translate(26px, -90px) rotate(18deg); opacity: 0; }
-        }
-      `}</style>
-
-      <section className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-5 lg:gap-14">
-        <div className="lg:col-span-3">
+    <main className="overflow-x-clip text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+      <section className="relative min-h-screen overflow-hidden px-5 sm:px-12">
+        <DotField />
+        <Parallax
+          speed={0.2}
+          fade
+          className="relative flex min-h-screen flex-col justify-end pb-20 pt-32 sm:pb-24"
+        >
           <Reveal>
-            <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
-              About me
-            </h1>
-          </Reveal>
-
-          <RevealText className="mt-4 max-w-xl text-base text-slate-600 sm:mt-6 sm:text-lg dark:text-slate-400">
-            I’m a web development student interested in building responsive and
-            interactive web applications. I enjoy learning new technologies and
-            applying them to projects that help me improve my development
-            skills.
-          </RevealText>
-
-          <RevealText className="mt-4 max-w-xl text-base text-slate-600 sm:text-lg dark:text-slate-400">
-            I’m 20 years old, and when I’m not coding you’ll probably find me
-            playing music, playing games, or out on the pickleball court.
-          </RevealText>
-        </div>
-      </section>
-
-      <section className="mx-auto mt-20 max-w-5xl sm:mt-28">
-        <Reveal>
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            What I’m into
-          </h2>
-        </Reveal>
-
-        <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2">
-          {hobbies.map((h, i) => (
-            <Reveal key={h.title} retraso={i * 80}>
-              <div className="group flex h-full gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-6 transition-[scale,border-color] duration-500 ease-[cubic-bezier(0.25,1.12,0.35,1)] hover:scale-[1.03] hover:border-slate-800 sm:p-7 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-200">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-300 text-slate-700 transition-colors duration-500 group-hover:border-slate-800 group-hover:bg-slate-800 group-hover:text-white dark:border-slate-600 dark:text-slate-200 dark:group-hover:border-white dark:group-hover:bg-white dark:group-hover:text-slate-900">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className={`h-5 w-5 transition-transform duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] ${h.anim}`}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    {h.icon}
-                  </svg>
-                </span>
-                <div>
-                  <h3 className="text-xl font-semibold tracking-tight">
-                    {h.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-slate-600 sm:text-base dark:text-slate-400">
-                    {h.text}
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto mt-20 max-w-3xl sm:mt-28">
-        <Reveal>
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            The short version
-          </h2>
-        </Reveal>
-
-        <Reveal retraso={100}>
-          <pre className="mt-6 overflow-x-auto rounded-3xl border border-slate-200 bg-slate-50 p-5 text-xs leading-relaxed text-slate-700 sm:p-8 sm:text-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-            <code>{profileCode}</code>
-          </pre>
-        </Reveal>
-      </section>
-
-      <Reveal>
-        <div className="mt-16 flex justify-center sm:mt-24">
-          <Link
-            href="/contact"
-            className="group inline-flex items-center gap-3 rounded-full bg-slate-800 py-3 pl-8 pr-4 font-bold text-white transition-all duration-300 hover:scale-105 active:scale-95 dark:bg-slate-700"
-          >
-            Say hi
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-800 transition-transform duration-500 group-hover:-rotate-45">
-              <svg
-                viewBox="0 0 24 24"
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
+            <span className="text-big font-medium tracking-wide text-slate-500 dark:text-slate-400">
+              Web Development Student
             </span>
-          </Link>
-        </div>
-      </Reveal>
+          </Reveal>
+          <h1
+            aria-label="About me"
+            className="mt-4 text-[27vw] font-bold leading-[0.8] tracking-tighter sm:text-[19vw] [&_*]:!overflow-visible"
+          >
+            <span className="block">
+              <SplitTitle text="About" />
+            </span>
+            <span className="text-outline block pl-[10vw] sm:pl-[16vw]">
+              <SplitTitle text="me" delay={700} />
+            </span>
+          </h1>
+          <div className="mt-10 max-w-sm sm:ml-auto sm:mr-[6vw] sm:mt-0 sm:max-w-md">
+            <RevealText className="text-base text-slate-600 sm:text-lg dark:text-slate-400">
+              I’m a web development student interested in building responsive
+              and interactive web applications. I enjoy learning new
+              technologies and applying them to projects that help me improve my
+              development skills.
+            </RevealText>
+            <RevealText className="mt-4 text-base text-slate-600 sm:text-lg dark:text-slate-400">
+              I’m 20 years old, and when I’m not coding you’ll probably find me
+              playing music, playing games, or out on the pickleball court.
+            </RevealText>
+          </div>
+        </Parallax>
+      </section>
+
+      <ScrollRuler
+        items={[
+          "Programming",
+          "Music",
+          "Video games",
+          "Pickleball",
+          "Design",
+          "Always learning",
+        ]}
+      />
+      <OrbitScroll label="What I’m into" items={hobbies} />
+      <CodeScene code={profileCode} />
     </main>
   );
 }

@@ -1,22 +1,30 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+// Cursor animado que se adapta a los elementos interactivos de la página.
+import { useEffect, useRef, useSyncExternalStore } from "react";
 
 const interactive =
   "a, button, [role='button'], input, textarea, select, label, [data-cursor]";
 const outlineSel = "input, textarea, select, [data-cursor='outline']";
 
-const BASE = 8; // tamaño del cuadrito en reposo
-const MAX_STRETCH = 96; // estiramiento máximo (px)
-const PAD = 2; // holgura alrededor del elemento
-const MAX_W = 520; // elementos más grandes no se fijan
+const BASE = 8;
+const MAX_STRETCH = 96;
+const PAD = 2;
+const MAX_W = 520;
 const MAX_H = 360;
-const STIFF = 240; // rigidez del resorte hover
-const DAMP = 20; // amortiguación (menos = más rebote)
+const STIFF = 240;
+const DAMP = 20;
 
-const BODY_N = 14; // puntos de quiebre del cuerpo líquido
-const BODY_RATE = 260; // qué tan pegado sigue cada punto al anterior (menos = más largo y flojo)
-const BODY_TAPER = 0.55; // los últimos puntos van más flojos (1 = todos igual)
+const BODY_N = 14;
+const BODY_RATE = 260;
+const BODY_TAPER = 0.55;
+const subscribeToFinePointer = (onChange: () => void) => {
+  const media = window.matchMedia("(hover: hover) and (pointer: fine)");
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+};
+const hasFinePointer = () =>
+  window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const clamp = (v: number, min: number, max: number) =>
@@ -29,19 +37,14 @@ function readRadius(el: Element) {
 }
 
 export default function CustomCursor() {
-  const [enabled, setEnabled] = useState(false);
+  const enabled = useSyncExternalStore(
+    subscribeToFinePointer,
+    hasFinePointer,
+    () => false,
+  );
   const shapeRef = useRef<HTMLDivElement>(null);
   const fillRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<SVGPathElement>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setEnabled(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setEnabled(e.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
 
   useEffect(() => {
     if (!enabled) return;
@@ -52,17 +55,16 @@ export default function CustomCursor() {
 
     const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    // Estado mutable (sin React)
     let px = -100,
-      py = -100; // puntero
+      py = -100;
     let angle = 0;
     let k = 0,
-      kv = 0; // 0 = reposo, 1 = fijado (resorte)
+      kv = 0;
     let p = 0,
-      pT = 0; // presionado
+      pT = 0;
     let vis = 0,
-      visT = 0; // visibilidad
-    let fillV = 1; // 1 = relleno, 0 = solo contorno
+      visT = 0;
+    let fillV = 1;
     let seen = false,
       rescan = false;
     let raf = 0,
@@ -72,9 +74,8 @@ export default function CustomCursor() {
     let lastNode: Node | null = null;
     let radius = { v: 0, pct: false };
     let outline = false;
-    const er = { l: 0, t: 0, w: 0, h: 0 }; // último rect válido del elemento
+    const er = { l: 0, t: 0, w: 0, h: 0 };
 
-    // Cadena del cuerpo: el punto 0 es el puntero, los demás lo siguen
     const bx = new Float64Array(BODY_N).fill(-100);
     const by = new Float64Array(BODY_N).fill(-100);
     const LINK = MAX_STRETCH / (BODY_N - 1);
@@ -94,7 +95,6 @@ export default function CustomCursor() {
       const reduced = rm.matches;
       const damp = (l: number) => 1 - Math.exp(-l * dt);
 
-      // 1) LECTURAS
       if (rescan) {
         rescan = false;
         const el = document.elementFromPoint(px, py);
@@ -129,8 +129,6 @@ export default function CustomCursor() {
         }
       }
 
-      // 2) FÍSICA
-      // Cadena: cada punto persigue al anterior, así el cuerpo dobla siguiendo la trayectoria
       bx[0] = px;
       by[0] = py;
       let len = 0;
@@ -155,7 +153,6 @@ export default function CustomCursor() {
         }
       }
 
-      // Orientación de la cabeza: hacia donde apunta el cuerpo
       const ref = Math.min(3, BODY_N - 1);
       const adx = bx[0] - bx[ref];
       const ady = by[0] - by[ref];
@@ -175,7 +172,6 @@ export default function CustomCursor() {
       vis += (visT - vis) * damp(18);
       fillV += (fillT - fillV) * damp(20);
 
-      // 3) FORMA: cápsula líquida en reposo <-> rect del elemento
       const L = BASE + len;
       const H = BASE * clamp(Math.sqrt(BASE / L), 0.4, 1);
 
@@ -196,14 +192,12 @@ export default function CustomCursor() {
       const rot = lerp(rotDraw, 0, k01);
       const sc = lerp(1 - 0.4 * p, 1 - 0.05 * p, k01);
 
-      // Cuerpo: línea suave por todos los puntos, con grosor = H
       let d = `M${fx(bx[0])} ${fx(by[0])}`;
       for (let i = 1; i < BODY_N - 1; i++) {
         d += `Q${fx(bx[i])} ${fx(by[i])} ${fx((bx[i] + bx[i + 1]) / 2)} ${fx((by[i] + by[i + 1]) / 2)}`;
       }
       d += `L${fx(bx[BODY_N - 1])} ${fx(by[BODY_N - 1])}`;
 
-      // 4) ESCRITURAS
       shape.style.width = `${w}px`;
       shape.style.height = `${h}px`;
       shape.style.borderRadius = `${r}px`;
@@ -215,7 +209,6 @@ export default function CustomCursor() {
       body.setAttribute("stroke-width", `${H * (1 - 0.4 * p)}`);
       body.style.opacity = `${vis * (1 - k01)}`;
 
-      // 5) ¿SEGUIMOS O DORMIMOS?
       const energy =
         len +
         Math.abs(kT - k) * 50 +
@@ -226,7 +219,7 @@ export default function CustomCursor() {
         rd +
         (rescan ? 1 : 0);
       quiet = energy > 0.02 ? 0 : quiet + 1;
-      const hold = fits ? 45 : 2; // fijado: sigue un rato por si el elemento anima
+      const hold = fits ? 45 : 2;
       raf = quiet > hold ? 0 : requestAnimationFrame(frame);
     };
 

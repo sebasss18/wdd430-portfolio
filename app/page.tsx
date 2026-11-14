@@ -106,7 +106,6 @@ export default async function Home() {
                 key={stat.label}
                 className="group relative isolate overflow-hidden py-6 sm:py-8"
               >
-                {/* Separador con fade arriba y abajo */}
                 {i > 0 && (
                   <span
                     aria-hidden="true"

@@ -1,5 +1,6 @@
 "use client";
 
+// CTA animado que navega al destino mediante una transición orbital.
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -9,7 +10,6 @@ type Props = {
   title?: string;
 };
 
-// radio de la órbita, tamaño, duración (s) y ángulo inicial
 const PLANETS = [
   { name: "Mercury", orbit: 86, size: 1.2, duration: 14, start: 20 },
   { name: "Venus", orbit: 95, size: 2, duration: 22, start: 140 },
@@ -35,12 +35,10 @@ export default function DiscCTA({
   const planetRefs = useRef<(SVGGElement | null)[]>([]);
   const busy = useRef(false);
 
-  // Estado de la animación compartido entre el loop y el click
   const speedTarget = useRef(1);
   const speedRef = useRef(1);
   const anglesRef = useRef(PLANETS.map((p) => p.start));
 
-  // Un solo loop: rotación continua con velocidad suavizada
   useEffect(() => {
     const reduce = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -104,7 +102,6 @@ export default function DiscCTA({
 
     const DURATION = 1100;
 
-    // --- Clon del disco: viaja, crece y luego se perfora ---
     const clone = disc.cloneNode(true) as HTMLDivElement;
     clone.classList.add("disc-clone");
 
@@ -125,7 +122,7 @@ export default function DiscCTA({
     const vh = window.innerHeight;
 
     const rOpen = Math.hypot(vw / 2, vh / 2) + 2;
-    const k = rOpen / r0; // escala necesaria para cubrir la pantalla
+    const k = rOpen / r0;
     const dx = vw / 2 - cx;
     const dy = vh / 2 - cy;
 
@@ -143,14 +140,12 @@ export default function DiscCTA({
     });
     document.body.appendChild(clone);
 
-    // Los planetas del clon continúan desde su ángulo actual y bajan
-    // poco a poco a una velocidad menor, sin detenerse nunca.
     const clonePlanets = Array.from(
       clone.querySelectorAll<SVGGElement>("[data-planet]"),
     );
     const angles = [...anglesRef.current];
     const s0 = Math.max(speedRef.current, 1);
-    const sEnd = 0.6; // velocidad final: más lenta, pero nunca detenida
+    const sEnd = 0.6;
     const t0 = performance.now();
     let lastT = t0;
     let alive = true;
@@ -171,7 +166,6 @@ export default function DiscCTA({
     };
     requestAnimationFrame(brake);
 
-    // 1) El disco viaja al centro de la pantalla mientras crece
     const zoom = clone.animate(
       [
         { transform: "translate3d(0,0,0) scale(1)" },
@@ -184,9 +178,6 @@ export default function DiscCTA({
       },
     );
 
-    // 2) Un hueco circular se abre desde el centro y borra el disco,
-    //    revelando la página nueva que ya está debajo.
-    //    La máscara está en coordenadas locales del clon (radio r0).
     const openHole = () => {
       const duration = 1300;
       const start = performance.now();
@@ -194,7 +185,6 @@ export default function DiscCTA({
       const frame = (now: number) => {
         const t = Math.min((now - start) / duration, 1);
         const r = easeInOutCubic(t) * (r0 + 2);
-        // Borde nítido: sin degradado entre el hueco y el disco
         const mask = `radial-gradient(circle at 50% 50%, transparent ${r}px, #000 ${r + 0.5}px)`;
         clone.style.maskImage = mask;
         clone.style.webkitMaskImage = mask;
@@ -202,7 +192,7 @@ export default function DiscCTA({
         if (t < 1) {
           requestAnimationFrame(frame);
         } else {
-          alive = false; // detiene el giro de los planetas
+          alive = false;
           clone.remove();
         }
       };
@@ -217,7 +207,6 @@ export default function DiscCTA({
         const arrived = window.location.pathname === href;
         if (arrived || Date.now() - started > 3000) {
           clearInterval(timer);
-          // Dos frames + una pausa corta: la página nueva ya está pintada
           requestAnimationFrame(() =>
             requestAnimationFrame(() => setTimeout(openHole, 150)),
           );
@@ -259,7 +248,6 @@ export default function DiscCTA({
         }
       `}</style>
 
-      {/* Brillo exterior: solo cambia opacidad (barato y suave) */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -inset-[8%] rounded-full bg-[radial-gradient(circle,rgb(128_128_128/0.22),transparent_68%)] opacity-0 transition-opacity duration-700 ease-out group-hover:opacity-100"
@@ -269,13 +257,11 @@ export default function DiscCTA({
         ref={discRef}
         className="relative isolate aspect-square w-full overflow-hidden rounded-full border border-slate-200/60 bg-slate-50 text-slate-900 transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] [clip-path:circle(50%)] group-hover:scale-[1.02] group-active:scale-[0.985] dark:border-slate-800/60 dark:bg-slate-900 dark:text-slate-100"
       >
-        {/* Brillo suave central ("sol") */}
         <div
           aria-hidden="true"
           className="disc-sun pointer-events-none absolute inset-[18%] rounded-full bg-[radial-gradient(circle,rgb(128_128_128/0.16),transparent_70%)]"
         />
 
-        {/* Sistema solar */}
         <svg
           viewBox="0 0 300 300"
           className="absolute inset-0 h-full w-full text-slate-400 transition-colors duration-700 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300"
@@ -332,7 +318,6 @@ export default function DiscCTA({
           ))}
         </svg>
 
-        {/* Contenido central */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-[26%] text-center">
           <h2 className="text-xl font-semibold leading-tight tracking-tight sm:text-3xl">
             {title}

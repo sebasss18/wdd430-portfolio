@@ -141,20 +141,6 @@ body {
   animation: shimmer 2.2s ease-in-out infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .reveal-ltr {
-    clip-path: none;
-    opacity: 1;
-    animation: none;
-  }
-
-  .pop,
-  .rise > *,
-  .shimmer::after {
-    animation: none;
-  }
-}
-
 @keyframes glass-in {
   0% {
     opacity: 0;
@@ -209,30 +195,51 @@ body {
   }
 }
 
-/* keyframes for the stats */
-
-@keyframes stat-float {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  50% { transform: translate3d(12px, -16px, 0) rotate(-2deg); }
+@keyframes letter-rise {
+  from {
+    transform: translateY(110%) rotate(6deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
 }
 
-@keyframes stat-sheen {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+@keyframes scroll-hint {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(200%);
+  }
 }
 
-@keyframes stat-glow {
-  0%, 100% { opacity: 0.35; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.25); }
+.letter-rise {
+  animation: letter-rise 1s cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
 
-
-@keyframes stat-drift-x {
-  0%, 100% { transform: translateX(-8px); }
-  50% { transform: translateX(8px); }
+.scroll-hint {
+  animation: scroll-hint 1.8s ease-in-out infinite;
 }
 
-@keyframes stat-drift-y {
-  0%, 100% { transform: translateY(6px); }
-  50% { transform: translateY(-6px); }
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(128, 128, 128, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ltr {
+    clip-path: none;
+    opacity: 1;
+    animation: none;
+  }
+
+  .pop,
+  .rise > *,
+  .shimmer::after,
+  .letter-rise,
+  .scroll-hint {
+    animation: none;
+  }
 }
