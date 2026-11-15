@@ -30,7 +30,7 @@ const hobbies = [
   },
   {
     title: "Music",
-    text: "I play saxophone, piano, acoustic guitar, and electric guitar. Music is life to me.",
+    text: "I play saxophone, piano, acoustic guitar, and electric guitar. Music is life to me",
     icon: (
       <>
         <circle cx="7" cy="17.5" r="2.3" />
@@ -44,7 +44,7 @@ const hobbies = [
   },
   {
     title: "Video games",
-    text: "I like video games. Good games feel smooth, and I try to bring that feeling to my interfaces.",
+    text: "I love video games. I think everyone has enjoyed playing video games at least once in their life. It’s not just about enjoying the story or the gameplay, but also about the moments you share when playing with your brothers, friends, or even family. Video games have been a big part of my childhood and continue to be a part of my life",
     icon: (
       <>
         <path d="M7 6.5h10a4.5 4.5 0 0 1 4.4 5.4l-.9 4.2a2.8 2.8 0 0 1-4.8 1.3l-2.1-1.9h-3.2l-2.1 1.9a2.8 2.8 0 0 1-4.8-1.3l-.9-4.2A4.5 4.5 0 0 1 7 6.5z" />
@@ -56,7 +56,7 @@ const hobbies = [
   },
   {
     title: "Pickleball",
-    text: "I like playing pickleball. good company, and a break from the screen.",
+    text: "I play pickleball. with friends, family, its a good break from the screen.",
     icon: (
       <>
         <g transform="rotate(-35 10 11)">
