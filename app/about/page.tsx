@@ -158,7 +158,6 @@ export default function About() {
           "Video games",
           "Pickleball",
           "Design",
-          "Always learning",
         ]}
       />
       <OrbitScroll label="What I’m into" items={hobbies} />
