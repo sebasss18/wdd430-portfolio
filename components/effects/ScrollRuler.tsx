@@ -115,7 +115,7 @@ export default function ScrollRuler({ items }: Props) {
     <div
       ref={host}
       aria-hidden="true"
-      className="relative select-none py-14 text-slate-400 sm:py-24 dark:text-slate-600"
+      className="relative select-none py-14 text-slate-600 sm:py-24"
     >
       <div
         className="relative h-24 overflow-hidden sm:h-32"
@@ -137,7 +137,7 @@ export default function ScrollRuler({ items }: Props) {
                     ref={(el) => {
                       tags.current[k * row.length + j] = el;
                     }}
-                    className="font-label flex items-center gap-3 whitespace-nowrap px-6 text-xs uppercase tracking-[0.35em] text-slate-900 sm:gap-4 sm:px-12 sm:text-base dark:text-white"
+                    className="font-label flex items-center gap-3 whitespace-nowrap px-6 text-xs uppercase tracking-[0.35em] text-slate-100 sm:gap-4 sm:px-12 sm:text-base"
                     style={{ opacity: 0.25 }}
                   >
                     <span className="text-[10px] opacity-60">
@@ -163,12 +163,12 @@ export default function ScrollRuler({ items }: Props) {
           style={{ backgroundImage: tick, backgroundSize: `${MAJOR}px 100%` }}
         />
         <div className="absolute inset-x-0 bottom-0 h-px bg-current opacity-60" />
-        <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-gradient-to-b from-transparent to-slate-900 dark:to-white" />
+        <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-gradient-to-b from-transparent to-slate-100" />
       </div>
 
       <span
         ref={readout}
-        className="font-label mt-4 block text-center text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:text-xs dark:text-slate-400"
+        className="font-label mt-4 block text-center text-[10px] uppercase tracking-[0.3em] text-slate-400 sm:text-xs"
       >
         X 00000
       </span>

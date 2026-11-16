@@ -51,6 +51,99 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+body:has(.about-page) {
+  --background: #000000;
+  --foreground: #f5f5f5;
+  color-scheme: dark;
+}
+
+body:has(.about-page) > header {
+  border-color: #262626;
+}
+
+body:has(.about-page) > header > div:first-child {
+  background-color: rgb(0 0 0 / 80%);
+}
+
+body:has(.about-page) > header a {
+  color: #f5f5f5;
+}
+
+body:has(.about-page) > header nav button span {
+  background-color: #f5f5f5;
+}
+
+body:has(.about-page) > header nav > div > div:first-child {
+  background-color: #262626;
+}
+
+body:has(.about-page) > header nav > div > div:nth-child(2) {
+  background-color: #000000;
+}
+
+body:has(.about-page) > header nav ul {
+  color: #f5f5f5;
+}
+
+body:has(.about-page) > header nav ul > li > span {
+  background-color: #404040;
+}
+
+body:has(.about-page) > header nav a[href="/login"] {
+  background-color: #262626;
+  color: #f5f5f5;
+}
+
+body:has(.about-page) > footer {
+  border-color: #262626;
+  background-color: #171717;
+  color: #d4d4d4;
+}
+
+body:has(.about-page) > footer p {
+  color: #d4d4d4;
+}
+
+body:has(.about-page) > footer .font-label {
+  color: #a3a3a3;
+}
+
+body:has(.about-page) > footer a {
+  color: #e5e5e5;
+}
+
+body:has(.about-page) > footer a:hover {
+  color: #fff;
+}
+
+body:has(.about-page) > footer [class~="border-t"] {
+  border-color: #262626;
+}
+
+body:has(.about-page) > footer a[aria-label] {
+  border-color: #404040;
+  background-color: #000000;
+  color: #d4d4d4;
+}
+
+body:has(.about-page) > footer button {
+  border-color: #404040;
+  background-color: #000000;
+  color: #d4d4d4;
+}
+
+body:has(.about-page) > footer button > span {
+  background-color: #404040;
+  color: #f5f5f5;
+}
+
+@media (min-width: 768px) {
+  body:has(.about-page) > header nav ul {
+    border-color: #262626;
+    background-color: #171717;
+  }
+}
+
 .reveal-ltr {
   clip-path: inset(-0.2em 100% -0.2em 0);
   opacity: 0;

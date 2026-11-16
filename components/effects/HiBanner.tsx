@@ -1,22 +1,78 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 const greetings = [
-  "Say hi",
-  "Hola",
-  "Bonjour",
-  "Ciao",
-  "こんにちは",
-  "Hallo",
-  "Olá",
+  "Say hi", // English
+  "Hola", // Spanish
+  "Bonjour", // French
+  "Ciao", // Italian
+  "こんにちは", // Japanese
+  "Hallo", // German
+  "Olá", // Portuguese
+  "Привет", // Russian
+  "你好", // Chinese
+  "안녕하세요", // Korean
+  "مرحبا", // Arabic
+  "नमस्ते", // Hindi
+  "สวัสดี", // Thai
+  "Merhaba", // Turkish
+  "Hej", // Swedish
+  "Hei", // Norwegian
+  "Dzień dobry", // Polish
+  "Γεια σου", // Greek
+  "שלום", // Hebrew
+  "Xin chào", // Vietnamese
+  "سلام", // Persian
+  "Habari", // Swahili
+  "Bună", // Romanian
+  "Ahoj", // Czech
+  "Halo", // Indonesian
+  "Cześć", // Polish
+  "Jambo", // Swahili
 ];
+
+// Extrusión 3D monocromática: copias apiladas detrás de cada letra, cada vez más
+// tenues y desenfocadas. El desenfoque se pinta como text-shadow (sigma = radio / 2)
+// con el relleno transparente: queda horneado en la textura de la capa en vez de
+// recalcularse en la GPU en cada frame como pasaba con filter: blur().
+const LAYERS = [
+  { z: 6, cls: "opacity-[0.22] dark:opacity-[0.5]", blur: 0 },
+  { z: 12, cls: "opacity-[0.18] dark:opacity-[0.42]", blur: 0 },
+  { z: 18, cls: "opacity-[0.14] dark:opacity-[0.34]", blur: 0.4 },
+  { z: 26, cls: "opacity-[0.1] dark:opacity-[0.24]", blur: 0.8 },
+  { z: 36, cls: "opacity-[0.07] dark:opacity-[0.16]", blur: 1.4 },
+  { z: 48, cls: "opacity-[0.04] dark:opacity-[0.09]", blur: 2.2 },
+];
+
+// halo de entrada: el mismo glifo muy desenfocado (sigma 10), que se funde con el
+// glifo nítido. Equivale al blur(10px) -> blur(0) de antes, pero sin animar filtros.
+const GHOST: CSSProperties = {
+  textShadow: "0 0 20px currentColor",
+  WebkitTextFillColor: "transparent",
+};
+
+const clamp1 = (v: number) => Math.max(-1, Math.min(1, v));
+
+type Pt = { x: number; y: number };
+type LetterState = {
+  y: number;
+  z: number;
+  s: number;
+  rx: number;
+  ry: number;
+  dirty: boolean;
+};
 
 export default function HiBanner({ href }: { href: string }) {
   const [i, setI] = useState(0);
   const link = useRef<HTMLAnchorElement>(null);
+  const stage = useRef<HTMLSpanElement>(null);
+  const wordEl = useRef<HTMLSpanElement>(null);
   const letters = useRef<(HTMLSpanElement | null)[]>([]);
+  const mouse = useRef<Pt | null>(null);
+  const tilt = useRef({ rx: 0, ry: 0 });
   const word = greetings[i];
 
   useEffect(() => {
@@ -27,69 +83,146 @@ export default function HiBanner({ href }: { href: string }) {
 
   useEffect(() => {
     const host = link.current;
-    if (!host) return;
+    const stg = stage.current;
+    if (!host || !stg) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let raf = 0;
     let running = false;
-    let mouse: { x: number; y: number } | null = null;
-    const cur: { y: number; s: number }[] = [];
+    let prev = 0;
+    const centers: { x: number; y: number; h: number }[] = [];
+    const cur: LetterState[] = [];
 
-    const tick = () => {
-      let moving = false;
+    // Posición de cada letra respecto al escenario, medida con offset* (el layout no
+    // cambia con transform): así no hay que leer getBoundingClientRect letra por
+    // letra en cada frame, que forzaba un layout por cada escritura de estilo.
+    const measure = () => {
+      const w = wordEl.current;
+      if (!w) return;
       letters.current.forEach((el, k) => {
         const box = el?.parentElement;
         if (!el || !box) return;
-        const c = cur[k] ?? (cur[k] = { y: 0, s: 1 });
-        let ty = 0;
-        let ts = 1;
-        if (mouse) {
-          const r = box.getBoundingClientRect();
-          const d = Math.hypot(
-            mouse.x - (r.left + r.width / 2),
-            mouse.y - (r.top + r.height / 2),
-          );
-          const f = Math.max(0, 1 - d / (r.height * 1.8));
-          ty = -f * r.height * 0.2;
-          ts = 1 + f * 0.4;
-        }
-        c.y += (ty - c.y) * 0.12;
-        c.s += (ts - c.s) * 0.12;
-        el.style.transform = `translate3d(0, ${c.y}px, 0) scale(${c.s})`;
-        if (Math.abs(ty - c.y) > 0.05 || Math.abs(ts - c.s) > 0.001) {
-          moving = true;
-        }
+        centers[k] = {
+          x: w.offsetLeft + box.offsetLeft + box.offsetWidth / 2,
+          y: w.offsetTop + box.offsetTop + box.offsetHeight / 2,
+          h: box.offsetHeight,
+        };
       });
-      if (moving || mouse) {
-        raf = requestAnimationFrame(tick);
-      } else {
-        running = false;
-      }
     };
+    measure();
+    document.fonts?.ready.then(measure);
+    const ro = new ResizeObserver(measure);
+    ro.observe(stg);
 
-    const start = () => {
-      if (running) return;
-      running = true;
+    const tick = (time: number) => {
+      if (!running) return;
+      const dt = prev ? Math.min(50, time - prev) : 16.667;
+      prev = time;
+      const k = dt / 16.667;
+      const m = mouse.current;
+
+      // única lectura de layout del frame, antes de cualquier escritura
+      const sr = m ? stg.getBoundingClientRect() : null;
+
+      // inclinación 3D de toda la palabra hacia el puntero + respiración suave
+      let trx = Math.cos(time * 0.0006) * 1.1;
+      let try_ = Math.sin(time * 0.0008) * 2.2;
+      if (m && sr) {
+        const nx = clamp1((m.x - (sr.left + sr.width / 2)) / (sr.width / 2));
+        const ny = clamp1((m.y - (sr.top + sr.height / 2)) / (sr.height / 2));
+        try_ += nx * 12;
+        trx += -ny * 7;
+      }
+      const a = 1 - Math.pow(0.92, k);
+      const t = tilt.current;
+      t.rx += (trx - t.rx) * a;
+      t.ry += (try_ - t.ry) * a;
+      if (wordEl.current) {
+        wordEl.current.style.transform = `rotateX(${t.rx.toFixed(3)}deg) rotateY(${t.ry.toFixed(3)}deg)`;
+      }
+
+      // cada letra se adelanta, crece y gira hacia el puntero
+      const b = 1 - Math.pow(0.88, k);
+      letters.current.forEach((el, n) => {
+        const c = centers[n];
+        if (!el || !c) return;
+        const s = cur[n] ?? (cur[n] = { y: 0, z: 0, s: 1, rx: 0, ry: 0, dirty: false });
+        let ty = 0;
+        let tz = 0;
+        let ts = 1;
+        let tlx = 0;
+        let tly = 0;
+        if (m && sr) {
+          const dx = m.x - (sr.left + c.x);
+          const dy = m.y - (sr.top + c.y);
+          const d = Math.hypot(dx, dy);
+          const f = Math.max(0, 1 - d / (c.h * 1.8));
+          ty = -f * c.h * 0.2;
+          tz = f * 70;
+          ts = 1 + f * 0.3;
+          tly = clamp1(dx / (c.h * 1.2)) * f * 22;
+          tlx = clamp1(-dy / (c.h * 1.2)) * f * 14;
+        }
+        s.y += (ty - s.y) * b;
+        s.z += (tz - s.z) * b;
+        s.s += (ts - s.s) * b;
+        s.rx += (tlx - s.rx) * b;
+        s.ry += (tly - s.ry) * b;
+        const moving =
+          Math.abs(ty - s.y) > 0.05 ||
+          Math.abs(tz - s.z) > 0.05 ||
+          Math.abs(ts - s.s) > 0.001 ||
+          Math.abs(tlx - s.rx) > 0.02 ||
+          Math.abs(tly - s.ry) > 0.02;
+        if (!moving) {
+          // en reposo: se fija el valor final y se deja de escribir estilos
+          if (!s.dirty) return;
+          s.y = ty;
+          s.z = tz;
+          s.s = ts;
+          s.rx = tlx;
+          s.ry = tly;
+          s.dirty = false;
+        } else {
+          s.dirty = true;
+        }
+        el.style.transform = `translate3d(0, ${s.y.toFixed(2)}px, ${s.z.toFixed(2)}px) rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg) scale(${s.s.toFixed(4)})`;
+      });
+
       raf = requestAnimationFrame(tick);
     };
 
+    // solo corre mientras el banner está en pantalla
+    const io = new IntersectionObserver(([en]) => {
+      if (en.isIntersecting) {
+        if (!running) {
+          running = true;
+          prev = 0;
+          raf = requestAnimationFrame(tick);
+        }
+      } else {
+        running = false;
+        cancelAnimationFrame(raf);
+      }
+    });
+    io.observe(host);
+
     const onMove = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
-      mouse = { x: e.clientX, y: e.clientY };
-      start();
+      mouse.current = { x: e.clientX, y: e.clientY };
     };
-
     const onLeave = () => {
-      mouse = null;
-      start();
+      mouse.current = null;
     };
-
     host.addEventListener("pointermove", onMove);
     host.addEventListener("pointerleave", onLeave);
     return () => {
+      running = false;
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      ro.disconnect();
       host.removeEventListener("pointermove", onMove);
       host.removeEventListener("pointerleave", onLeave);
-      cancelAnimationFrame(raf);
     };
   }, [word]);
 
@@ -101,46 +234,119 @@ export default function HiBanner({ href }: { href: string }) {
     <Link
       ref={link}
       href={href}
-      className="group relative block w-full py-4 text-slate-800 dark:text-slate-100"
+      className="group relative block w-full py-4 text-slate-900 [--fg:15,23,42] dark:text-slate-100 dark:[--fg:255,255,255]"
     >
+      {/* cada letra entra desde el desenfoque y se enfoca, como los hobbies de PathScroll */}
+      <style>{`
+        @keyframes hi-sharp {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes hi-ghost {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
+        .hi-sharp { animation: hi-sharp 900ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+        .hi-ghost { animation: hi-ghost 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+        @media (prefers-reduced-motion: reduce) {
+          .hi-sharp { animation: none; }
+          .hi-ghost { display: none; }
+        }
+      `}</style>
+
       <span className="sr-only">Say hi</span>
 
       <span
         aria-hidden="true"
-        className="font-label block text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:text-xs dark:text-slate-400"
+        className="font-label block text-[10px] uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400 sm:text-xs"
       >
         Got a minute?
       </span>
 
       <span
+        ref={stage}
         aria-hidden="true"
-        className="mt-4 flex items-end justify-between gap-4"
+        className="relative mt-4 flex items-end justify-between gap-4"
+        style={{ perspective: "1000px" }}
       >
+
         <span
           key={word}
-          className="flex min-h-[1.15em] text-[16vw] font-bold leading-none tracking-tighter sm:text-[10vw]"
+          ref={wordEl}
+          className="relative flex min-h-[1.15em] text-[16vw] font-bold leading-none tracking-tighter will-change-transform [transform-style:preserve-3d] sm:text-[10vw]"
         >
-          {Array.from(word).map((ch, k) => (
-            <span
-              key={k}
-              className="letter-rise inline-block"
-              style={{ animationDelay: `${k * 45}ms` }}
-            >
+          {Array.from(word).map((ch, k) => {
+            const glyph = ch === " " ? " " : ch;
+            const delay = `${k * 45}ms`;
+            return (
               <span
-                ref={(el) => {
-                  letters.current[k] = el;
-                }}
-                className="inline-block origin-bottom will-change-transform"
+                key={k}
+                className="letter-rise inline-block [transform-style:preserve-3d]"
+                style={{ animationDelay: delay }}
               >
-                {ch === " " ? "\u00A0" : ch}
+                <span
+                  ref={(el) => {
+                    letters.current[k] = el;
+                  }}
+                  className="relative inline-block origin-bottom will-change-transform [transform-style:preserve-3d]"
+                >
+                  {/* cara frontal nítida */}
+                  <span
+                    className="hi-sharp block"
+                    style={{ animationDelay: delay }}
+                  >
+                    {glyph}
+                  </span>
+
+                  {/* halo desenfocado que se funde al entrar */}
+                  <span
+                    aria-hidden="true"
+                    className="hi-ghost pointer-events-none absolute inset-0 block"
+                    style={{ ...GHOST, animationDelay: delay }}
+                  >
+                    {glyph}
+                  </span>
+
+                  {/* contorno fino ligeramente adelante: define el borde de la cara */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 block text-transparent"
+                    style={{
+                      transform: "translateZ(3px)",
+                      WebkitTextStroke: "1px rgba(var(--fg),0.28)",
+                    }}
+                  >
+                    {glyph}
+                  </span>
+
+                  {/* grosor: capas detrás, cada vez más tenues y suaves */}
+                  {LAYERS.map((l, n) => (
+                    <span
+                      key={n}
+                      aria-hidden="true"
+                      className={`pointer-events-none absolute inset-0 block text-slate-900 dark:text-white ${l.cls}`}
+                      style={{
+                        transform: `translateZ(${-l.z}px)`,
+                        ...(l.blur
+                          ? {
+                              textShadow: `0 0 ${l.blur * 2}px currentColor`,
+                              WebkitTextFillColor: "transparent",
+                            }
+                          : null),
+                      }}
+                    >
+                      {glyph}
+                    </span>
+                  ))}
+                </span>
               </span>
-            </span>
-          ))}
+            );
+          })}
         </span>
 
         <svg
           viewBox="0 0 24 24"
-          className="mb-2 h-10 w-10 shrink-0 -rotate-45 text-slate-500 transition-all duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] group-hover:translate-x-2 group-hover:rotate-0 group-hover:text-slate-900 sm:mb-4 sm:h-16 sm:w-16 dark:text-slate-400 dark:group-hover:text-white"
+          className="mb-2 h-10 w-10 shrink-0 -rotate-45 text-slate-500 transition-all duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] group-hover:translate-x-2 group-hover:rotate-0 group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100 sm:mb-4 sm:h-16 sm:w-16"
           fill="none"
           stroke="currentColor"
           strokeWidth="1.4"
