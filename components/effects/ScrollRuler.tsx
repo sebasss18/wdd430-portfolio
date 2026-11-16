@@ -34,31 +34,42 @@ export default function ScrollRuler({ items }: Props) {
 
     let raf = 0;
     let running = false;
-    let cur = window.scrollY;
+    let cur = Math.max(0, window.scrollY);
+    let hostW = 0;
+    let unitW = 0;
+    let offsets: number[] = [];
+
+    const measure = () => {
+      hostW = root.clientWidth;
+      unitW = u.offsetWidth;
+      offsets = tags.current.map((el) =>
+        el ? el.offsetLeft + el.offsetWidth / 2 : 0,
+      );
+    };
 
     const render = () => {
-      const w = u.offsetWidth;
       const x = cur * 0.6;
-      tr.style.transform = `translate3d(${w > 0 ? -(x % w) : 0}px, 0, 0)`;
+      const shift = unitW > 0 ? -(x % unitW) : 0;
+      tr.style.transform = `translate3d(${shift}px, 0, 0)`;
       if (minor.current) minor.current.style.backgroundPositionX = `${-x}px`;
       if (major.current) major.current.style.backgroundPositionX = `${-x}px`;
       if (readout.current) {
         readout.current.textContent = `X ${String(Math.round(x)).padStart(5, "0")}`;
       }
-      const box = root.getBoundingClientRect();
-      const mid = box.left + box.width / 2;
-      tags.current.forEach((el) => {
-        if (!el) return;
-        const r = el.getBoundingClientRect();
-        const d = Math.abs(r.left + r.width / 2 - mid);
-        const f = Math.max(0, 1 - d / (box.width * 0.28));
+      const mid = hostW / 2;
+      const range = hostW * 0.28;
+      for (let i = 0; i < tags.current.length; i++) {
+        const el = tags.current[i];
+        if (!el) continue;
+        const d = Math.abs(offsets[i] + shift - mid);
+        const f = range > 0 ? Math.max(0, 1 - d / range) : 0;
         el.style.opacity = String(0.25 + f * 0.75);
         el.style.transform = `translate3d(0, ${-f * 6}px, 0)`;
-      });
+      }
     };
 
     const tick = () => {
-      const t = window.scrollY;
+      const t = Math.max(0, window.scrollY);
       cur = reduce ? t : cur + (t - cur) * 0.08;
       render();
       if (Math.abs(t - cur) > 0.1) {
@@ -74,12 +85,28 @@ export default function ScrollRuler({ items }: Props) {
       raf = requestAnimationFrame(tick);
     };
 
+    let lastW = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth !== lastW) {
+        lastW = window.innerWidth;
+        measure();
+      }
+      start();
+    };
+
+    measure();
     render();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        measure();
+        render();
+      });
+    }
     window.addEventListener("scroll", start, { passive: true });
-    window.addEventListener("resize", start);
+    window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("scroll", start);
-      window.removeEventListener("resize", start);
+      window.removeEventListener("resize", onResize);
       cancelAnimationFrame(raf);
     };
   }, []);

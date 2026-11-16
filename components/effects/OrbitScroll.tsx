@@ -67,6 +67,7 @@ export default function OrbitScroll({
 }) {
   const n = items.length;
   const section = useRef<HTMLElement>(null);
+  const stick = useRef<HTMLDivElement>(null);
   const nodes = useRef<(SVGGElement | null)[]>([]);
   const reticles = useRef<(SVGGElement | null)[]>([]);
   const arc = useRef<SVGPathElement>(null);
@@ -76,7 +77,8 @@ export default function OrbitScroll({
 
   useEffect(() => {
     const el = section.current;
-    if (!el) return;
+    const st = stick.current;
+    if (!el || !st) return;
     const reduce = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -87,9 +89,10 @@ export default function OrbitScroll({
     let last = 0;
 
     const target = () => {
-      const rect = el.getBoundingClientRect();
-      const total = rect.height - window.innerHeight;
-      return Math.min(1, Math.max(0, -rect.top / total));
+      const total = el.offsetHeight - st.offsetHeight;
+      if (total <= 0) return 0;
+      const top = el.getBoundingClientRect().top;
+      return Math.min(1, Math.max(0, -top / total));
     };
 
     const render = (p: number) => {
@@ -122,7 +125,7 @@ export default function OrbitScroll({
 
     const tick = () => {
       const t = target();
-      cur = cur < 0 || reduce ? t : cur + (t - cur) * 0.08;
+      cur = cur < 0 || reduce ? t : cur + (t - cur) * 0.12;
       render(cur);
       if (Math.abs(t - cur) > 0.0005) {
         raf = requestAnimationFrame(tick);
@@ -151,9 +154,9 @@ export default function OrbitScroll({
     <section
       ref={section}
       className="relative"
-      style={{ height: `${n * 110}dvh` }}
+      style={{ height: `${n * 110}svh` }}
     >
-      <div className="sticky top-0 h-dvh overflow-hidden">
+      <div ref={stick} className="sticky top-0 h-svh overflow-hidden">
         <DotField />
 
         <p className="font-label absolute left-5 top-6 z-10 text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:left-16 sm:top-12 sm:text-xs dark:text-slate-400">
@@ -167,7 +170,7 @@ export default function OrbitScroll({
           SCAN 000%
         </span>
 
-        <div className="pointer-events-none absolute left-0 top-[12dvh] w-[185vw] text-slate-400 sm:left-auto sm:right-[3vw] sm:top-1/2 sm:w-[58vw] sm:-translate-y-1/2 dark:text-slate-600">
+        <div className="pointer-events-none absolute left-0 top-[12svh] w-[185vw] text-slate-400 sm:left-auto sm:right-[3vw] sm:top-1/2 sm:w-[58vw] sm:-translate-y-1/2 dark:text-slate-600">
           <svg
             viewBox="-110 -58 220 116"
             className="w-full overflow-visible"
@@ -246,7 +249,7 @@ export default function OrbitScroll({
           </svg>
         </div>
 
-        <div className="absolute inset-x-4 bottom-[7dvh] z-10 rounded-2xl border border-slate-900/10 bg-white/70 p-5 backdrop-blur-md sm:inset-x-auto sm:bottom-auto sm:left-16 sm:top-1/2 sm:w-[26rem] sm:-translate-y-1/2 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none dark:border-white/10 dark:bg-slate-950/60 sm:dark:bg-transparent">
+        <div className="absolute inset-x-4 bottom-[7svh] z-10 rounded-2xl border border-slate-900/10 bg-white/70 p-5 backdrop-blur-md sm:inset-x-auto sm:bottom-auto sm:left-16 sm:top-1/2 sm:w-[26rem] sm:-translate-y-1/2 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none dark:border-white/10 dark:bg-slate-950/60 sm:dark:bg-transparent">
           <p className="font-label text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:text-xs dark:text-slate-400">
             {String(active + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
           </p>
