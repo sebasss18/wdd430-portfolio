@@ -1,5 +1,6 @@
-// Página que lista los proyectos de código abierto del portafolio.
+import { Suspense } from "react";
 import ProjectList from "@/components/projects/ProjectList";
+import ProjectCardSkeleton from "@/components/projects/ProjectCardSkeleton";
 import { getProjects } from "../../../lib/projects-db";
 import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
@@ -10,22 +11,30 @@ export const metadata: Metadata = {
     "Explore open-source web development projects by Sebastian Bernal, including the technologies and work behind each project.",
 };
 
-export default async function Home() {
+async function OpenSourceProjects() {
   const projects = await getProjects("opensource");
 
+  if (projects.length === 0) {
+    return (
+      <p className="text-slate-500 dark:text-slate-400">
+        No OpenSource projects found.
+      </p>
+    );
+  }
+
+  return <ProjectList projects={projects} />;
+}
+
+export default function Home() {
   return (
     <main className="container mx-auto min-h-screen px-4 py-12 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <h1 className="mb-10 text-3xl font-bold text-slate-900 dark:text-slate-100">
         OpenSource Projects
       </h1>
 
-      {projects.length > 0 ? (
-        <ProjectList projects={projects} />
-      ) : (
-        <p className="text-slate-500 dark:text-slate-400">
-          No OpenSource projects found.
-        </p>
-      )}
+      <Suspense fallback={<ProjectCardSkeleton />}>
+        <OpenSourceProjects />
+      </Suspense>
     </main>
   );
 }
