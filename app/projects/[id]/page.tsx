@@ -1,10 +1,11 @@
-// Página de detalle que presenta un proyecto y enlaces de navegación relacionados.
 import { cache } from "react";
 import type { Metadata } from "next";
-import { getProjectById, getProjects } from "@/lib/projects-db";
+import { getProjectById } from "@/lib/projects-db";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Reveal from "@/components/effects/Reveal";
+import DotField from "@/components/effects/DotField";
+import ProjectPreview from "@/components/projects/ProjectPreview";
 
 const getCachedProjectById = cache(getProjectById);
 
@@ -45,10 +46,49 @@ export async function generateMetadata({
 }
 
 const eyebrow =
-  "text-xs font-medium uppercase tracking-widest text-slate-500 sm:text-sm dark:text-slate-400";
+  "font-label text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:text-xs dark:text-slate-400";
 
-const circle =
-  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-transform duration-500";
+const arrow = (
+  <svg
+    viewBox="0 0 24 24"
+    className="h-6 w-6 shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.25,1.4,0.35,1)] group-hover:-rotate-45 sm:h-8 sm:w-8"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M5 12h14M13 6l6 6-6 6" />
+  </svg>
+);
+
+function LinkRow({
+  label,
+  value,
+  href,
+}: {
+  label: string;
+  value: string;
+  href: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-center justify-between gap-4 border-b border-slate-300 py-5 transition-colors hover:border-slate-800 focus-visible:outline-none focus-visible:border-slate-800 sm:py-7 dark:border-slate-800 dark:hover:border-slate-200 dark:focus-visible:border-slate-200"
+    >
+      <div className="min-w-0">
+        <p className={eyebrow}>{label}</p>
+        <p className="mt-1 truncate text-xl font-bold tracking-tighter transition-transform duration-500 ease-[cubic-bezier(0.25,1.12,0.35,1)] group-hover:translate-x-2 sm:text-3xl">
+          {value}
+        </p>
+      </div>
+      {arrow}
+    </a>
+  );
+}
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { id } = await params;
@@ -62,26 +102,21 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   if (!project) notFound();
 
-  const all = await getProjects();
-  const index = all.findIndex((p) => p.id === project.id);
-  const prev = index > 0 ? all[index - 1] : null;
-  const next = index >= 0 && index < all.length - 1 ? all[index + 1] : null;
+  const host = (project.liveUrl ?? project.link ?? "localhost:3000")
+    .replace(/^https?:\/\//, "")
+    .replace(/\/$/, "");
 
   return (
-    <main className="min-h-screen overflow-x-hidden text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <section className="relative px-5 py-10 sm:px-4 sm:py-16">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle,rgb(128_128_128/0.35)_1px,transparent_1px)] bg-[size:22px_22px] [mask-image:radial-gradient(ellipse_at_top,black_25%,transparent_70%)]"
-        />
-
-        <div className="mx-auto max-w-4xl">
+    <main className="min-h-dvh overflow-x-clip text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+      <section className="relative overflow-hidden px-5 pb-10 pt-28 sm:px-12 sm:pb-14 sm:pt-32">
+        <DotField />
+        <div className="relative mx-auto max-w-6xl">
           <Reveal>
             <Link
               href="/projects"
-              className="group inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+              className="group inline-flex items-center gap-3 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-white transition-all duration-300 group-hover:-translate-x-1 group-hover:border-slate-800 group-hover:bg-slate-800 group-hover:text-white dark:border-slate-700 dark:bg-slate-900 dark:group-hover:border-white dark:group-hover:bg-white dark:group-hover:text-slate-900">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 transition-transform duration-300 group-hover:-translate-x-1 dark:border-slate-700">
                 <svg
                   viewBox="0 0 24 24"
                   className="h-4 w-4"
@@ -101,78 +136,81 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
           <header className="mt-10 sm:mt-14">
             <Reveal retraso={80}>
-              <span className="inline-block rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium capitalize tracking-wide text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
+              <p className={`${eyebrow} capitalize`}>
                 {project.type}
-              </span>
+                {project.yearCompleted ? ` · ${project.yearCompleted}` : ""}
+              </p>
             </Reveal>
-
             <Reveal retraso={160}>
-              <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
+              <h1 className="mt-4 break-words text-5xl font-bold leading-[0.95] tracking-tighter sm:text-7xl lg:text-8xl">
                 {project.title}
               </h1>
             </Reveal>
           </header>
-
-          <Reveal retraso={240}>
-            <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm sm:rounded-3xl sm:p-8 dark:border-slate-800 dark:bg-slate-900">
-              <p className={eyebrow}>About</p>
-              <p className="mt-3 whitespace-pre-line text-base leading-relaxed text-slate-700 sm:text-lg dark:text-slate-300">
-                {project.description}
-              </p>
-            </div>
-          </Reveal>
-
-          <section className="mt-10 sm:mt-14">
-            <Reveal>
-              <p className={eyebrow}>Stack</p>
-              <h2 className="mt-2 text-xl font-bold tracking-tight sm:text-2xl">
-                Built with
-              </h2>
-            </Reveal>
-
-            <ul className="mt-5 flex flex-wrap gap-2" aria-label="Technologies">
-              {project.technologies.map((tech, i) => (
-                <li key={tech}>
-                  <Reveal retraso={i * 60}>
-                    <span className="block cursor-default rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-all duration-300 hover:-translate-y-1 hover:border-slate-800 hover:bg-slate-800 hover:text-white sm:px-4 sm:py-2 sm:text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-white dark:hover:bg-white dark:hover:text-slate-900">
-                      {tech}
-                    </span>
-                  </Reveal>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {project.link && (
-            <Reveal>
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group mt-10 inline-flex items-center gap-3 rounded-full bg-slate-800 py-3 pl-8 pr-4 font-bold text-white transition-all duration-300 hover:scale-105 active:scale-95 sm:mt-14 dark:bg-slate-700"
-              >
-                Visit project
-                <span
-                  className={`${circle} bg-white text-slate-800 group-hover:-rotate-45`}
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M5 12h14M13 6l6 6-6 6" />
-                  </svg>
-                </span>
-              </a>
-            </Reveal>
-          )}
         </div>
       </section>
+
+      <section className="mx-auto max-w-6xl px-5 sm:px-12">
+        <Reveal retraso={200}>
+          <ProjectPreview
+            src={project.liveUrl}
+            image={project.image}
+            title={project.title}
+            host={host}
+          />
+        </Reveal>
+      </section>
+
+      <section className="mx-auto mt-14 max-w-6xl px-5 sm:mt-20 sm:px-12">
+        <Reveal>
+          <p className={eyebrow}>About</p>
+        </Reveal>
+        <Reveal retraso={80}>
+          <p className="mt-4 max-w-4xl whitespace-pre-line text-lg leading-relaxed text-slate-700 sm:text-2xl sm:leading-relaxed dark:text-slate-300">
+            {project.description}
+          </p>
+        </Reveal>
+
+        <Reveal retraso={120}>
+          <ul className="mt-8 flex flex-wrap gap-2" aria-label="Technologies">
+            {project.technologies.map((tech) => (
+              <li
+                key={tech}
+                className="rounded-full border border-slate-300 px-3 py-1 text-xs font-medium text-slate-700 sm:px-4 sm:py-1.5 sm:text-sm dark:border-slate-700 dark:text-slate-300"
+              >
+                {tech}
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+      </section>
+
+      {(project.liveUrl || project.link) && (
+        <section className="mx-auto mt-14 max-w-6xl px-5 pb-20 sm:mt-20 sm:px-12">
+          <div className="border-t border-slate-300 dark:border-slate-800">
+            {project.liveUrl && (
+              <Reveal>
+                <LinkRow
+                  label="Live site"
+                  value={host}
+                  href={project.liveUrl}
+                />
+              </Reveal>
+            )}
+            {project.link && (
+              <Reveal retraso={80}>
+                <LinkRow
+                  label="Repository"
+                  value={project.link
+                    .replace(/^https?:\/\//, "")
+                    .replace(/\/$/, "")}
+                  href={project.link}
+                />
+              </Reveal>
+            )}
+          </div>
+        </section>
+      )}
     </main>
   );
 }
