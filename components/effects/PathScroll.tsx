@@ -444,6 +444,8 @@ export default function PathScroll({
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
+    const mobile = window.matchMedia("(max-width: 639px)").matches;
+
     // DIAGNÓSTICO (borrar después): ?off=floor,dust,blur,glow,grain,scene
     const off = new Set(
       (new URLSearchParams(window.location.search).get("off") ?? "")
@@ -455,11 +457,11 @@ export default function PathScroll({
     };
     if (off.has("floor")) lineEls.current.forEach(hide);
     if (off.has("dust")) dustEls.current.forEach(hide);
-    if (off.has("grain")) hide(grain.current);
+    if (off.has("grain") || mobile) hide(grain.current);
     if (off.has("glow"))
       st.querySelectorAll<HTMLElement>("[data-glow]").forEach(hide);
     if (off.has("scene")) hide(wd);
-    const noBlur = off.has("blur");
+    const noBlur = off.has("blur") || mobile;
 
     const mouse = { tx: 0, ty: 0, x: 0, y: 0 };
     const onMove = (e: PointerEvent) => {
@@ -648,7 +650,7 @@ export default function PathScroll({
             node.style.setProperty("--tf", "transparent");
           } else {
             node.style.setProperty("--bf", "none");
-            node.style.setProperty("--bs", DROP);
+            node.style.setProperty("--bs", mobile ? "none" : DROP);
             node.style.setProperty("--ts", "none");
             node.style.setProperty("--tf", "currentColor");
           }
