@@ -93,7 +93,9 @@ export default function HiBanner({ href }: { href: string }) {
     };
   }, [word]);
 
-  letters.current = [];
+  useEffect(() => {
+    letters.current = letters.current.slice(0, word.length);
+  }, [word]);
 
   return (
     <Link
