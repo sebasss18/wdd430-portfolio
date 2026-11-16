@@ -4,39 +4,35 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 const greetings = [
-  "Say hi", // English
-  "Hola", // Spanish
-  "Bonjour", // French
-  "Ciao", // Italian
-  "こんにちは", // Japanese
-  "Hallo", // German
-  "Olá", // Portuguese
-  "Привет", // Russian
-  "你好", // Chinese
-  "안녕하세요", // Korean
-  "مرحبا", // Arabic
-  "नमस्ते", // Hindi
-  "สวัสดี", // Thai
-  "Merhaba", // Turkish
-  "Hej", // Swedish
-  "Hei", // Norwegian
-  "Dzień dobry", // Polish
-  "Γεια σου", // Greek
-  "שלום", // Hebrew
-  "Xin chào", // Vietnamese
-  "سلام", // Persian
-  "Habari", // Swahili
-  "Bună", // Romanian
-  "Ahoj", // Czech
-  "Halo", // Indonesian
-  "Cześć", // Polish
-  "Jambo", // Swahili
+  "Say hi",
+  "Hola",
+  "Bonjour",
+  "Ciao",
+  "こんにちは",
+  "Hallo",
+  "Olá",
+  "Привет",
+  "你好",
+  "안녕하세요",
+  "مرحبا",
+  "नमस्ते",
+  "สวัสดี",
+  "Merhaba",
+  "Hej",
+  "Hei",
+  "Dzień dobry",
+  "Γεια σου",
+  "שלום",
+  "Xin chào",
+  "سلام",
+  "Habari",
+  "Bună",
+  "Ahoj",
+  "Halo",
+  "Cześć",
+  "Jambo",
 ];
 
-// Extrusión 3D monocromática: copias apiladas detrás de cada letra, cada vez más
-// tenues y desenfocadas. El desenfoque se pinta como text-shadow (sigma = radio / 2)
-// con el relleno transparente: queda horneado en la textura de la capa en vez de
-// recalcularse en la GPU en cada frame como pasaba con filter: blur().
 const LAYERS = [
   { z: 6, cls: "opacity-[0.22] dark:opacity-[0.5]", blur: 0 },
   { z: 12, cls: "opacity-[0.18] dark:opacity-[0.42]", blur: 0 },
@@ -46,8 +42,6 @@ const LAYERS = [
   { z: 48, cls: "opacity-[0.04] dark:opacity-[0.09]", blur: 2.2 },
 ];
 
-// halo de entrada: el mismo glifo muy desenfocado (sigma 10), que se funde con el
-// glifo nítido. Equivale al blur(10px) -> blur(0) de antes, pero sin animar filtros.
 const GHOST: CSSProperties = {
   textShadow: "0 0 20px currentColor",
   WebkitTextFillColor: "transparent",
@@ -93,9 +87,6 @@ export default function HiBanner({ href }: { href: string }) {
     const centers: { x: number; y: number; h: number }[] = [];
     const cur: LetterState[] = [];
 
-    // Posición de cada letra respecto al escenario, medida con offset* (el layout no
-    // cambia con transform): así no hay que leer getBoundingClientRect letra por
-    // letra en cada frame, que forzaba un layout por cada escritura de estilo.
     const measure = () => {
       const w = wordEl.current;
       if (!w) return;
@@ -121,10 +112,8 @@ export default function HiBanner({ href }: { href: string }) {
       const k = dt / 16.667;
       const m = mouse.current;
 
-      // única lectura de layout del frame, antes de cualquier escritura
       const sr = m ? stg.getBoundingClientRect() : null;
 
-      // inclinación 3D de toda la palabra hacia el puntero + respiración suave
       let trx = Math.cos(time * 0.0006) * 1.1;
       let try_ = Math.sin(time * 0.0008) * 2.2;
       if (m && sr) {
@@ -141,12 +130,12 @@ export default function HiBanner({ href }: { href: string }) {
         wordEl.current.style.transform = `rotateX(${t.rx.toFixed(3)}deg) rotateY(${t.ry.toFixed(3)}deg)`;
       }
 
-      // cada letra se adelanta, crece y gira hacia el puntero
       const b = 1 - Math.pow(0.88, k);
       letters.current.forEach((el, n) => {
         const c = centers[n];
         if (!el || !c) return;
-        const s = cur[n] ?? (cur[n] = { y: 0, z: 0, s: 1, rx: 0, ry: 0, dirty: false });
+        const s =
+          cur[n] ?? (cur[n] = { y: 0, z: 0, s: 1, rx: 0, ry: 0, dirty: false });
         let ty = 0;
         let tz = 0;
         let ts = 1;
@@ -175,7 +164,6 @@ export default function HiBanner({ href }: { href: string }) {
           Math.abs(tlx - s.rx) > 0.02 ||
           Math.abs(tly - s.ry) > 0.02;
         if (!moving) {
-          // en reposo: se fija el valor final y se deja de escribir estilos
           if (!s.dirty) return;
           s.y = ty;
           s.z = tz;
@@ -192,7 +180,6 @@ export default function HiBanner({ href }: { href: string }) {
       raf = requestAnimationFrame(tick);
     };
 
-    // solo corre mientras el banner está en pantalla
     const io = new IntersectionObserver(([en]) => {
       if (en.isIntersecting) {
         if (!running) {
@@ -236,7 +223,6 @@ export default function HiBanner({ href }: { href: string }) {
       href={href}
       className="group relative block w-full py-4 text-slate-900 [--fg:15,23,42] dark:text-slate-100 dark:[--fg:255,255,255]"
     >
-      {/* cada letra entra desde el desenfoque y se enfoca, como los hobbies de PathScroll */}
       <style>{`
         @keyframes hi-sharp {
           from { opacity: 0; }
@@ -269,14 +255,13 @@ export default function HiBanner({ href }: { href: string }) {
         className="relative mt-4 flex items-end justify-between gap-4"
         style={{ perspective: "1000px" }}
       >
-
         <span
           key={word}
           ref={wordEl}
           className="relative flex min-h-[1.15em] text-[16vw] font-bold leading-none tracking-tighter will-change-transform [transform-style:preserve-3d] sm:text-[10vw]"
         >
           {Array.from(word).map((ch, k) => {
-            const glyph = ch === " " ? " " : ch;
+            const glyph = ch === " " ? " " : ch;
             const delay = `${k * 45}ms`;
             return (
               <span
@@ -290,36 +275,6 @@ export default function HiBanner({ href }: { href: string }) {
                   }}
                   className="relative inline-block origin-bottom will-change-transform [transform-style:preserve-3d]"
                 >
-                  {/* cara frontal nítida */}
-                  <span
-                    className="hi-sharp block"
-                    style={{ animationDelay: delay }}
-                  >
-                    {glyph}
-                  </span>
-
-                  {/* halo desenfocado que se funde al entrar */}
-                  <span
-                    aria-hidden="true"
-                    className="hi-ghost pointer-events-none absolute inset-0 block"
-                    style={{ ...GHOST, animationDelay: delay }}
-                  >
-                    {glyph}
-                  </span>
-
-                  {/* contorno fino ligeramente adelante: define el borde de la cara */}
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 block text-transparent"
-                    style={{
-                      transform: "translateZ(3px)",
-                      WebkitTextStroke: "1px rgba(var(--fg),0.28)",
-                    }}
-                  >
-                    {glyph}
-                  </span>
-
-                  {/* grosor: capas detrás, cada vez más tenues y suaves */}
                   {LAYERS.map((l, n) => (
                     <span
                       key={n}
@@ -338,6 +293,35 @@ export default function HiBanner({ href }: { href: string }) {
                       {glyph}
                     </span>
                   ))}
+
+                  <span
+                    aria-hidden="true"
+                    className="hi-ghost pointer-events-none absolute inset-0 block"
+                    style={{ ...GHOST, animationDelay: delay }}
+                  >
+                    {glyph}
+                  </span>
+
+                  <span
+                    className="hi-sharp block"
+                    style={{
+                      animationDelay: delay,
+                      transform: "translateZ(1px)",
+                    }}
+                  >
+                    {glyph}
+                  </span>
+
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 block text-transparent"
+                    style={{
+                      transform: "translateZ(3px)",
+                      WebkitTextStroke: "1px rgba(var(--fg),0.28)",
+                    }}
+                  >
+                    {glyph}
+                  </span>
                 </span>
               </span>
             );
