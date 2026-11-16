@@ -1,4 +1,3 @@
-// Página biográfica con intereses personales y escenas visuales interactivas.
 import type { Metadata } from "next";
 import Reveal from "@/components/effects/Reveal";
 import RevealText from "@/components/effects/RevealText";
@@ -75,33 +74,6 @@ const hobbies = [
   },
 ];
 
-const layouts = [
-  {
-    box: "items-end justify-start pb-24 sm:pb-32",
-    text: "items-start text-left",
-    num: "right-0",
-    speed: -14,
-  },
-  {
-    box: "items-start justify-end pt-28 sm:pt-36",
-    text: "items-end text-right",
-    num: "left-0",
-    speed: 12,
-  },
-  {
-    box: "items-center justify-start sm:pl-[8vw]",
-    text: "items-start text-left",
-    num: "right-0",
-    speed: -20,
-  },
-  {
-    box: "items-end justify-end pb-24 sm:pb-32",
-    text: "items-end text-right",
-    num: "left-0",
-    speed: 16,
-  },
-];
-
 const profileCode = `const sebastian = {
   age: 20,
   role: "Web development student",
@@ -113,52 +85,48 @@ const profileCode = `const sebastian = {
 export default function About() {
   return (
     <main className="overflow-x-clip text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <section className="relative min-h-screen overflow-hidden px-5 sm:px-12">
+      <section className="relative min-h-dvh overflow-hidden px-5 sm:px-12">
         <DotField />
         <Parallax
           speed={0.2}
           fade
-          className="relative flex min-h-screen flex-col justify-end pb-20 pt-32 sm:pb-24"
+          className="relative flex min-h-dvh flex-col justify-end pb-16 pt-28 sm:pb-20"
         >
           <Reveal>
             <span className="text-big font-medium tracking-wide text-slate-500 dark:text-slate-400">
               Web Development Student
             </span>
           </Reveal>
-          <h1
-            aria-label="About me"
-            className="mt-4 text-[27vw] font-bold leading-[0.8] tracking-tighter sm:text-[19vw] [&_*]:!overflow-visible"
-          >
-            <span className="block">
-              <SplitTitle text="About" />
-            </span>
-            <span className="text-outline block pl-[10vw] sm:pl-[16vw]">
-              <SplitTitle text="me" delay={700} />
-            </span>
-          </h1>
-          <div className="mt-10 max-w-sm sm:ml-auto sm:mr-[6vw] sm:mt-0 sm:max-w-md">
-            <RevealText className="text-base text-slate-600 sm:text-lg dark:text-slate-400">
-              I’m a web development student interested in building responsive
-              and interactive web applications. I enjoy learning new
-              technologies and applying them to projects that help me improve my
-              development skills.
-            </RevealText>
-            <RevealText className="mt-4 text-base text-slate-600 sm:text-lg dark:text-slate-400">
-              I’m 20 years old, and when I’m not coding you’ll probably find me
-              playing music, playing games, or out on the pickleball court.
-            </RevealText>
+          <div className="lg:flex lg:items-end lg:justify-between lg:gap-10">
+            <h1
+              aria-label="About me"
+              className="mt-4 text-[27vw] font-bold leading-[0.8] tracking-tighter sm:text-[length:min(19vw,26dvh)] [&_*]:!overflow-visible"
+            >
+              <span className="block">
+                <SplitTitle text="About" />
+              </span>
+              <span className="text-outline block pl-[10vw] sm:pl-[8vw] lg:pl-[6vw]">
+                <SplitTitle text="me" delay={700} />
+              </span>
+            </h1>
+            <div className="mt-10 max-w-sm sm:ml-auto sm:mr-[6vw] sm:max-w-md lg:ml-0 lg:mr-[3vw] lg:mt-0 lg:shrink-0 lg:pb-4">
+              <RevealText className="text-base text-slate-600 sm:text-lg dark:text-slate-400">
+                I’m a web development student interested in building responsive
+                and interactive web applications. I enjoy learning new
+                technologies and applying them to projects that help me improve
+                my development skills.
+              </RevealText>
+              <RevealText className="mt-4 text-base text-slate-600 sm:text-lg dark:text-slate-400">
+                I’m 20 years old, and when I’m not coding you’ll probably find
+                me playing music, playing games, or out on the pickleball court.
+              </RevealText>
+            </div>
           </div>
         </Parallax>
       </section>
 
       <ScrollRuler
-        items={[
-          "Programming",
-          "Music",
-          "Video games",
-          "Pickleball",
-          "Design",
-        ]}
+        items={["Programming", "Music", "Video games", "Pickleball", "Design"]}
       />
       <OrbitScroll label="What I’m into" items={hobbies} />
       <CodeScene code={profileCode} />

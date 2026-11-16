@@ -30,12 +30,13 @@ const place = (i: number, a: number, n: number) => {
 
 function useScramble(text: string) {
   const [out, setOut] = useState(text);
+  const reducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setOut(text);
-      return;
-    }
+    if (reducedMotion) return;
+
     let frame = 0;
     const id = setInterval(() => {
       frame++;
@@ -52,9 +53,9 @@ function useScramble(text: string) {
       if (reveal >= text.length) clearInterval(id);
     }, 32);
     return () => clearInterval(id);
-  }, [text]);
+  }, [reducedMotion, text]);
 
-  return out;
+  return reducedMotion ? text : out;
 }
 
 export default function OrbitScroll({
@@ -150,16 +151,23 @@ export default function OrbitScroll({
     <section
       ref={section}
       className="relative"
-      style={{ height: `${n * 110}vh` }}
+      style={{ height: `${n * 110}dvh` }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div className="sticky top-0 h-dvh overflow-hidden">
         <DotField />
 
-        <p className="font-label absolute left-5 top-8 z-10 text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:left-16 sm:top-12 sm:text-xs dark:text-slate-400">
+        <p className="font-label absolute left-5 top-6 z-10 text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:left-16 sm:top-12 sm:text-xs dark:text-slate-400">
           {label}
         </p>
 
-        <div className="pointer-events-none absolute inset-x-2 top-[14vh] text-slate-400 sm:inset-x-auto sm:right-[3vw] sm:top-1/2 sm:w-[58vw] sm:-translate-y-1/2 dark:text-slate-600">
+        <span
+          ref={readout}
+          className="font-label absolute right-5 top-6 z-10 text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:bottom-12 sm:right-12 sm:top-auto sm:text-xs dark:text-slate-400"
+        >
+          SCAN 000%
+        </span>
+
+        <div className="pointer-events-none absolute left-0 top-[12dvh] w-[185vw] text-slate-400 sm:left-auto sm:right-[3vw] sm:top-1/2 sm:w-[58vw] sm:-translate-y-1/2 dark:text-slate-600">
           <svg
             viewBox="-110 -58 220 116"
             className="w-full overflow-visible"
@@ -238,30 +246,35 @@ export default function OrbitScroll({
           </svg>
         </div>
 
-        <div className="absolute inset-x-5 bottom-24 z-10 sm:inset-x-auto sm:bottom-auto sm:left-16 sm:top-1/2 sm:w-[26rem] sm:-translate-y-1/2">
+        <div className="absolute inset-x-4 bottom-[7dvh] z-10 rounded-2xl border border-slate-900/10 bg-white/70 p-5 backdrop-blur-md sm:inset-x-auto sm:bottom-auto sm:left-16 sm:top-1/2 sm:w-[26rem] sm:-translate-y-1/2 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none dark:border-white/10 dark:bg-slate-950/60 sm:dark:bg-transparent">
           <p className="font-label text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:text-xs dark:text-slate-400">
             {String(active + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
           </p>
           <h3
             aria-label={items[active].title}
-            className="mt-3 whitespace-nowrap text-4xl font-bold tracking-tighter sm:text-6xl"
+            className="mt-2 break-words text-4xl font-bold leading-none tracking-tighter sm:mt-3 sm:whitespace-nowrap sm:text-6xl"
           >
             {title}
           </h3>
           <p
             key={active}
-            className="pop mt-4 max-w-sm text-base text-slate-600 sm:text-lg dark:text-slate-400"
+            className="pop mt-3 min-h-[4rem] max-w-sm text-sm leading-relaxed text-slate-600 sm:mt-4 sm:min-h-0 sm:text-lg dark:text-slate-400"
           >
             {items[active].text}
           </p>
+          <div className="mt-4 flex gap-1.5 sm:hidden">
+            {items.map((it, i) => (
+              <span
+                key={it.title}
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  i === active
+                    ? "w-6 bg-slate-900 dark:bg-white"
+                    : "w-1.5 bg-slate-300 dark:bg-slate-700"
+                }`}
+              />
+            ))}
+          </div>
         </div>
-
-        <span
-          ref={readout}
-          className="font-label absolute bottom-8 right-5 z-10 text-[10px] uppercase tracking-[0.3em] text-slate-500 sm:bottom-12 sm:right-12 sm:text-xs dark:text-slate-400"
-        >
-          SCAN 000%
-        </span>
       </div>
     </section>
   );
