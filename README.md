@@ -1,35 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portafolio de Sebastian Bernal
 
-## Getting Started
+Portafolio personal de desarrollo web full stack. Presenta mis proyectos, las tecnologías que utilizo y un poco sobre mí, con una interfaz interactiva y adaptable a distintos tamaños de pantalla.
 
-First, run the development server:
+## Funcionalidades
 
-```bash
-npm run dev
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Página principal con proyectos destacados y resumen de tecnologías.
+- Catálogo de proyectos con filtros, paginación y páginas de detalle.
+- Secciones para conocerme y ponerse en contacto.
+- Panel privado para crear, editar y administrar proyectos.
+- Autenticación con credenciales para proteger el panel.
+
+## Tecnologías
+
+- Next.js 16 y React 19 con TypeScript.
+- Tailwind CSS 4 y Motion para estilos y animaciones.
+- Neon Postgres para los proyectos y usuarios.
+- NextAuth para la autenticación.
+
+## Requisitos
+
+- Node.js compatible con Next.js 16.
+- Una base de datos Neon Postgres configurada con las tablas `projects` y `users`.
+- La variable `DATABASE_URL` con la cadena de conexión a la base de datos.
+- La variable `AUTH_SECRET` para la autenticación.
+
+Configura las variables en un archivo `.env.local` en la raíz del proyecto:
+
+```env
+DATABASE_URL=tu_cadena_de_conexion
+AUTH_SECRET=tu_secreto_de_autenticacion
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Desarrollo local
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Instala las dependencias e inicia el servidor:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Abre [http://localhost:3000](http://localhost:3000) en el navegador.
 
-To learn more about Next.js, take a look at the following resources:
+## Comandos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev    # Servidor de desarrollo
+npm run lint   # Revisión con ESLint
+npm run build  # Compilación de producción
+npm run start  # Servidor de producción
+```
